@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Name Novel</title>
+    <link rel="icon" href="https://lh3.google.com/u/1/d/1btktrYFS3By6IBlJWjCJ6SJnSm706KrQ=w1876-h972-iv1">
+
+    <style>
+        /*Header*/
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            padding: 10px;
+            background-image: url("https://img.freepik.com/free-vector/white-abstract-background_23-2148809724.jpg");
+        }
+
+        header img {
+            width: 100%;
+            height: auto;
+        }
+
+        header a{text-decoration: none;color:azure;}
+
+        header .home-logo {
+            width: 70px;
+            height: 30px;
+            padding: 15px;
+        }
+        header .logo, 
+        header .right-logo {
+            width: 20px;
+            height: 20px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+
+        header .right-logo img{
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        header h1 {
+            margin: 10px 0;
+        }
+
+        nav {
+            background-color: rgb(46, 46, 46);
+            color: white;
+            padding: 10px 0;
+        }
+
+        nav ul {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 5px 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: whitesmoke;
+            font-size: 8px;
+        }
+
+        .dropdown {
+            position: relative;
+            text-align: center;
+        }
+
+        .dropbtn {
+            font-size: 8px;
+            border: none;
+            background-color: transparent;
+            color: whitesmoke;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .dropcontent {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            text-align: center;
+            min-width: 50px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 4;
+            width: 150px;
+        }
+
+        .dropcontent a {
+            color: black;
+            padding: 10px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropcontent a:hover {
+            background-color: gray;
+            color: #ddd;
+        }
+
+        .show {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: start; 
+            gap: 12px; 
+        }
+
+        .show > * { 
+            flex: 0 1 calc(20% - 10px);
+            box-sizing: border-box; 
+        }
+
+        .find {
+            position: relative;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .find input {
+            width: 100%;
+            padding: 10px 40px 10px 10px; 
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            height: 8px;
+            font-size: 8px;
+        }
+
+        .find .icon {
+            position: absolute;
+            top: 50%;
+            right: 10px; 
+            transform: translateY(-50%);
+            color: #888;
+            cursor: pointer;
+        }
+
+        .find .icon:hover {
+            color: #333; 
+        }
+
+        .logo {margin-left: 2%;}
+        .right-logo {
+            margin-right: 2%;
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .right-logo:hover .account-dropdown {
+            display: block;
+        }
+
+        main {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            padding: 10px;
+            background-color: #888;
+        }
+        /*container*/
+        main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            gap: 10px;
+            padding: 10px;
+            border: none;
+            background-color: #ececec;
+        }
+        .chapter-control {
+            position: fixed;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 720px;
+            height: 50px;
+            gap: 15px;
+            padding: 10px;
+            border: none;
+            background-color: #ececec;
+            border-radius: 15px;
+            top: 165px;
+        }
+        .fixed-bottom {
+            display: none;
+        }
+
+        .fixed-top {
+            top: 0;
+            bottom: auto;
+        }
+        .chapter-control select {
+            width: 170px;
+            height: 32px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 6px;
+            font-size: 11px;
+            color: #333;
+        }
+        .chapter-control button {
+            border: 0 solid transparent;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: rgb(127, 225, 255);
+        }
+        .chapter-control .fa-solid {
+            cursor: pointer;
+        }
+        .chapter-control .fa-solid.fa-square-caret-left, .chapter-control .fa-solid.fa-square-caret-right {
+            font-size: 28px;
+        }
+        .chapter-control .fa-solid.fa-square-caret-left {
+            margin-right: -10px;
+        }
+        .chapter-control .fa-solid.fa-square-caret-right {
+            margin-left: -10px;
+        }
+        /*chapter*/
+        .chapter {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+        .chapter h1 {
+            margin-top: 50px;
+            margin-bottom: 0;
+            border: 1px solid transparent;
+            background-color: rgb(255, 255, 255);
+            padding: 20px;
+            padding-left: 200px;
+            padding-right: 200px;
+        }
+        .chapter .chapter-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+        .chapter .chapter-content img {
+            width: 100%;
+            height: auto;
+            margin: 0;
+        }
+        /*comment section*/
+        .comment-section {
+            max-width: 100%;
+            padding: 20px;
+            border-top: 5px solid #000000;
+            background-color: #ccc;
+        }
+
+        .comment-section h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            padding-bottom: 10px;
+            border-bottom: rgb(27, 27, 27) 2px solid;
+        }
+
+        .comment-input {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        #commentText {
+            flex: 1;
+            padding: 10px;
+            resize: vertical;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .comment-input button {
+            padding: 8px 16px;
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .comment {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .comment .user-avatar {
+            width: 35px;
+            height: 35px;
+        }
+
+        .comment-content {
+            background: #f0f2f5;
+            padding: 10px 15px;
+            border-radius: 15px;
+            width: 100%;
+        }
+
+        .comment-content .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /*footer*/
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #1b1b1be8;
+            border-top: 1px solid #ddd;
+            color: white;
+            font-size: 14px;
+        }
+        .tothetop button {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 60px;
+            width: 45px;
+            border: 1px solid #000000;
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.096);
+            color: rgb(0, 255, 242);
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        /* Desktop View */
+        @media (min-width: 768px) {
+            main {
+                gap: 10px; 
+                padding: 10px;
+            }
+
+            header {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+            }
+
+            header img{
+                display: flex;
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+            }
+            
+            header .home-logo {
+                width: 330px;
+                height: 120px;
+                padding: 15px;
+            }
+
+            header .logo,
+            header .right-logo {
+                width: 50px;
+                height: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            nav ul {
+                flex-direction: row;
+                justify-content: center;
+                list-style: none;
+                padding: 10px;
+                margin: 0;
+            }
+            nav ul li {
+                margin: 0 15px;
+            }
+            nav ul li a{
+                font-size: 16px;
+            }
+
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+
+            .dropcontent {
+                width: 700px;
+                margin-left: -170px;
+                min-width: 120px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            }
+
+            .dropbtn{font-size: 16px;}
+            .find{width: 200px;}
+            .find input{font-size: 16px;}
+            /*container*/
+            .container {
+                width: 700px;
+            }
+            .chapter-control {
+                top: 270px;
+            }
+            .fixed-top {
+                top: 0;
+                bottom: auto;
+            }
+            .fixed-bottom {
+                top: auto;
+                bottom: 0;
+                display: flex;
+            }
+            .chapter-control select {
+                font-size: 15px;
+            }
+            /*chapter*/
+            .chapter {
+                width: 700px;
+            }
+            /*comment section*/
+            .comment-section {
+                width: 820px;
+            }
+            /*footer*/
+            footer {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="logo" href="home.html"><img src="https://i.postimg.cc/B66gbNSH/HUB-1.png" width="50px" height="50px" alt=""></a>
+        <a href="home.html" class="home-logo"><img src="https://i.postimg.cc/bvLgq4hq/logo-web-novel-Canvases-Landscape-i1.png" alt=""></a>
+        <div class="right-logo" onclick="redirectToAccount()">
+            <img class="profile-pic" src="default-profile.png" alt="Profile Picture">
+        </div>   
+    </header>
+    <nav>
+        <ul>
+            <li><a href="home.html">Trang Chủ</a></li>
+            <li class="dropdown">
+                <button onclick="toggleDropdown()" class="dropbtn">Thể Loại</button>
+                <div id="myDropdown" class="dropcontent">
+                    <a href="#" onclick="redirectToGenre('all')">Tất cả thể loại</a>
+                    <a href="#" onclick="redirectToGenre('Hành Động')">Hành Động</a>
+                    <a href="#" onclick="redirectToGenre('Lãng Mạn')">Lãng Mạn</a>
+                    <a href="#" onclick="redirectToGenre('Hài Hước')">Hài Hước</a>
+                    <a href="#" onclick="redirectToGenre('Giả Tưởng')">Giả Tưởng</a>
+                    <a href="#" onclick="redirectToGenre('Võ Thuật')">Võ Thuật</a>
+                    <a href="#" onclick="redirectToGenre('Phiêu Lưu')">Phiêu Lưu</a>
+                    <a href="#" onclick="redirectToGenre('Hậu Cung')">Hậu Cung</a>
+                    <a href="#" onclick="redirectToGenre('Manga')">Manga</a>
+                    <a href="#" onclick="redirectToGenre('Manhua')">Manhua</a>
+                    <a href="#" onclick="redirectToGenre('Manhwa')">Manhwa</a>
+                    <a href="#" onclick="redirectToGenre('Kinh dị')">Kinh dị</a>
+                    <a href="#" onclick="redirectToGenre('Huyền Huyễn')">Huyền Huyễn</a>
+                    <a href="#" onclick="redirectToGenre('Trinh Thám')">Trinh Thám</a>
+                    <a href="#" onclick="redirectToGenre('Lịch Sử')">Lịch Sử</a>
+                    <a href="#" onclick="redirectToGenre('Khoa học')">Khoa học</a>
+                    <a href="#" onclick="redirectToGenre('Viễn Tưởng')">Viễn Tưởng</a>
+                    <a href="#" onclick="redirectToGenre('Siêu nhiên')">Siêu nhiên</a>
+                    <a href="#" onclick="redirectToGenre('Tu Tiên')">Tu Tiên</a>
+                    <a href="#" onclick="redirectToGenre('Hentai')">Hentai</a>
+                    <a href="#" onclick="redirectToGenre('Doujinshi')">Doujinshi</a>
+                    <a href="#" onclick="redirectToGenre('Webtoon')">Webtoon</a>
+                    <a href="#" onclick="redirectToGenre('Đời Thường')">Đời Thường</a>
+                    <a href="#" onclick="redirectToGenre('Fantasy')">Fantasy</a>
+                </div>
+            </li>
+            <li><a href="Follow.html">Theo Dõi</a></li>
+            <li><a href="">Liên Hệ</a></li>
+            <li>
+                <div class="find">
+                    <input type="text" id="search-input" placeholder="Tìm Truyện">
+                    <span class="icon" id="search-button">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    <main>
+        <div class="container">
+            <div class="top">
+                <div class="NovelName">
+                    <a href="${story.title}" ></a>
+                </div>
+                <div class="currentChapter">
+                    <a href="${story.chapter}"></a>
+                </div>
+            </div>
+            <div class="chapter-control">
+                <i class="fa-solid fa-house-chimney" onclick="redirectToHome()"></i>
+                <i class="fa-solid fa-list" id="redirectToStoryPage"></i>
+                <i class="fa-solid fa-square-caret-left" id="prevChapter"></i>
+                
+                <select name="NumOfchapter" id="NumOfchapter"></select>
+                
+                <i class="fa-solid fa-square-caret-right" id="nextChapter"></i>
+                
+                <button class="follow">
+                </button>
+            </div>            
+        </div>
+        <div class="chapter">
+            <h1></h1>
+            <div class="chapter-content"></div>
+        </div>
+        <div class="comment-section">
+            <h2>Bình luận</h2>
+            <div class="comment-input">
+                <img src="user-avatar.jpg" alt="User Avatar" class="user-avatar">
+                <textarea id="commentText" placeholder="Viết bình luận..."></textarea>
+                <button onclick="submitComment()">Gửi</button>
+            </div>
+            <div id="commentsList">
+            </div>
+        </div>        
+    </main>
+    <footer>
+        <div class="tothetop">
+            <button onclick="scrollToTop()" id="myBtn" title="Go to top"><i class="fa fa-angle-up" aria-hidden="true"></i></button>
+        </div>
+        <p>&copy; 2025 Truyện Tranh Online. All Rights Reserved.</p>
+    </footer>
+    <script src="https://kit.fontawesome.com/508b433abc.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>       
+        $(window).scroll(function() {
+            if ($(document).scrollTop() > 100) {
+                $("#myBtn").show();
+            } else {
+                $("#myBtn").hide();
+            }
+        });
+        function scrollToTop() {
+            $("html, body").animate({scrollTop: 0}, 700);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const chapterControl = document.querySelector(".chapter-control");
+            let lastScrollY = window.scrollY;
+
+            window.addEventListener("scroll", () => {
+                let currentScrollY = window.scrollY;
+
+                if (currentScrollY < 40) {
+                    chapterControl.classList.remove("fixed-top", "fixed-bottom");
+                    chapterControl.classList.add("normal-position");
+                } else if (currentScrollY > lastScrollY) {
+                    chapterControl.classList.remove("fixed-top");
+                    chapterControl.classList.add("fixed-bottom");
+                } else {
+                    chapterControl.classList.remove("fixed-bottom");
+                    chapterControl.classList.add("fixed-top");
+                }
+
+                lastScrollY = currentScrollY;
+            });
+        });
+
+        //Chapter
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const storyId = urlParams.get("story");
+                let chapterNumber = urlParams.get("chapter") || "0";
+
+                if (!storyId) throw new Error("❌ Không có storyId trong URL");
+
+                chapterNumber = chapterNumber.replace(/^chapter\s*/, "");
+
+                // ✅ Fetch story data
+                const response = await fetch(`/api/stories?id=${storyId}`);
+                if (!response.ok) throw new Error("❌ Không thể lấy dữ liệu truyện");
+
+                const stories = await response.json();
+                const story = stories.find(s => s._id === storyId);
+                if (!story) throw new Error("❌ Không tìm thấy truyện với ID này.");
+                console.log(story);
+                if (!story.chapters || typeof story.chapters !== "object") {
+                    throw new Error("❌ Dữ liệu chương bị lỗi hoặc không tồn tại.");
+                }
+
+                //To Story Page
+                const redirectButton = document.getElementById("redirectToStoryPage");
+                if (redirectButton) {
+                    redirectButton.addEventListener("click", () => redirectToStoryPage(story));
+                };
+
+                // ✅ Sort chapters correctly (handles "chapter 1", "chapter 10")
+                const chapterKeys = Object.keys(story.chapters).sort((a, b) => {
+                    const numA = parseInt(a.replace("chapter ", ""), 10);
+                    const numB = parseInt(b.replace("chapter ", ""), 10);
+                    return numA - numB;
+                });
+
+                const currentIndex = chapterKeys.indexOf(`chapter ${chapterNumber}`);
+
+                document.querySelector("h1").textContent = `Chương ${chapterNumber}`;
+
+                // ✅ Fetch user data for follow status
+                const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
+                let isFollowed = false;
+                if (storedData && storedData.user) {
+                    const userId = storedData.user.userId;
+                    const userResponse = await fetch(`/api/user?id=${userId}`);
+                    if (userResponse.ok) {
+                        const user = await userResponse.json();
+                        isFollowed = user.followedStories.includes(story._id);
+                    }
+                }
+
+                // ✅ Update follow button
+                const followButton = document.querySelector(".follow");
+                followButton.innerHTML = isFollowed
+                    ? `<button onclick="followStory('${story._id}')"><i class="fa-solid fa-xmark"></i> Unfollow</button>`
+                    : `<button onclick="followStory('${story._id}')"><i class="fa-regular fa-heart"></i> Follow</button>`;
+
+                // ✅ Populate chapter dropdown
+                const chapterSelect = document.getElementById("NumOfchapter");
+                chapterSelect.innerHTML = chapterKeys
+                    .map(chapter => `<option value="${chapter}">${chapter}</option>`)
+                    .join("");
+
+                chapterSelect.value = `chapter ${chapterNumber}`;
+
+                // ✅ Handle chapter selection change
+                chapterSelect.addEventListener("change", function () {
+                    window.location.href = `readWeb.html?story=${encodeURIComponent(storyId)}&chapter=${encodeURIComponent(this.value)}`;
+                });
+
+                // ✅ Previous & Next Chapter Buttons
+                document.getElementById("prevChapter").addEventListener("click", function () {
+                    if (currentIndex > 0) {
+                        window.location.href = `readWeb.html?story=${encodeURIComponent(storyId)}&chapter=${encodeURIComponent(chapterKeys[currentIndex - 1])}`;
+                    }
+                });
+
+                document.getElementById("nextChapter").addEventListener("click", function () {
+                    if (currentIndex < chapterKeys.length - 1) {
+                        window.location.href = `readWeb.html?story=${encodeURIComponent(storyId)}&chapter=${encodeURIComponent(chapterKeys[currentIndex + 1])}`;
+                    }
+                });
+
+                // ✅ Load Chapter Images
+                const images = story.chapters[`chapter ${chapterNumber}`] || [];
+                const imageContainer = document.querySelector(".chapter-content");
+
+                if (!Array.isArray(images) || images.length === 0) {
+                    imageContainer.innerHTML = "<p>❌ Không có ảnh cho chương này.</p>";
+                    return;
+                }
+
+                imageContainer.innerHTML = images
+                    .map(imgUrl => `<img src="${imgUrl}" alt="Chương ${chapterNumber}" style="width:100%; max-width:800px; display:block;">`)
+                    .join("");
+                
+                // ✅ Load Comments
+                loadComments(storyId, `chapter ${chapterNumber}`);
+
+            } catch (error) {
+                Swal.fire({ icon: "error", title: "Lỗi khi tải truyện", text: error.message, confirmButtonText: "OK" });
+            }
+        });
+
+        // ✅ Load Comment
+        async function loadComments(storyId, chapterId) {
+            try {
+                const res = await fetch(`/api/comments?storyId=${storyId}&chapterId=${chapterId}`);
+                if (!res.ok) throw new Error("Lỗi khi lấy bình luận từ server");
+                const comments = await res.json();
+
+                const container = document.getElementById("commentsList");
+                container.innerHTML = "";
+
+                if (!Array.isArray(comments) || comments.length === 0) {
+                    container.innerHTML = "<p>Chưa có bình luận nào.</p>";
+                    return;
+                }
+
+                // ✅ Hiển thị từng bình luận
+                for (const { userId, comment } of comments) {
+                    let userName = "Người dùng";
+                    let avatar = "default-avatar.png";
+
+                    // Fetch thông tin người dùng nếu chỉ có userId
+                    try {
+                        const userRes = await fetch(`/api/user?id=${userId}`);
+                        if (userRes.ok) {
+                            const user = await userRes.json();
+                            userName = user.username || "Người dùng";
+                            avatar = user.profilePic || "default-avatar.png";
+                        }
+                    } catch (err) {
+                        console.warn("Không lấy được thông tin user", err);
+                    }
+
+                    const commentDiv = document.createElement("div");
+                    commentDiv.classList.add("comment");
+                    commentDiv.innerHTML = `
+                        <img src="${avatar}" alt="${userName}">
+                        <div class="comment-content">
+                            <strong>${userName}</strong>
+                            <p>${comment}</p>
+                        </div>
+                    `;
+                    container.appendChild(commentDiv);
+                }
+            } catch (error) {
+                console.error("❌ Không thể tải bình luận:", error);
+            }
+        }
+
+        // ✅ Post Comment
+        async function submitComment() {
+            const commentText = document.getElementById("commentText").value.trim();
+            if (!commentText) return;
+
+            const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
+            if (!storedData || !storedData.user) {
+                return Swal.fire({ icon: "error", text: "Bạn cần đăng nhập để bình luận" });
+            }
+
+            const userId = storedData.user.userId;
+            const userResponse = await fetch(`/api/user?id=${userId}`);
+            if (!userResponse.ok) {
+                return Swal.fire({ icon: "error", text: "Không thể lấy thông tin người dùng." });
+            }
+
+            const user = await userResponse.json();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const storyId = urlParams.get("story");
+            let chapterId = urlParams.get("chapter") || "0";
+            chapterId =`chapter ${chapterId.replace(/^chapter\s*/, "")}`;
+
+            const newComment = {
+                storyId,
+                chapterId,
+                userId: userId,
+                userName: user.username || "Người dùng",
+                avatar: user.profilePic || "default-avatar.png",
+                comment: commentText
+            };
+
+            try {
+                const res = await fetch("/api/comments", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newComment)
+                });
+
+                if (res.ok) {
+                    document.getElementById("commentText").value = "";
+                    loadComments(storyId, chapterId);
+                } else {
+                    console.error("Lỗi khi gửi bình luận");
+                }
+            } catch (err) {
+                console.error("Lỗi khi gửi bình luận:", err);
+            }
+        }
+
+        // ✅ Follow/Unfollow Story
+        async function followStory(storyId) {
+            try {
+                const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
+                if (!storedData || !storedData.user || !storedData.user.userId) {
+                    Swal.fire({ icon: "error", text: "User chưa đăng nhập", confirmButtonText: "OK" });
+                    return;
+                }
+
+                const userId = storedData.user.userId;
+                const userResponse = await fetch(`/api/user?id=${userId}`);
+                if (!userResponse.ok) throw new Error("Không thể lấy thông tin người dùng");
+
+                const user = await userResponse.json();
+
+                let isFollowing = user.followedStories.includes(storyId);
+                let updatedFollowedStories = isFollowing
+                    ? user.followedStories.filter(id => id !== storyId)
+                    : [...user.followedStories, storyId];
+
+                // ✅ Update Follow List in Server
+                const response = await fetch(`/api/user/${user._id}/followedStories`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ followedStories: updatedFollowedStories })
+                });
+
+                if (!response.ok) throw new Error("Cập nhật trên server thất bại.");
+
+                // ✅ Update Follow Button UI
+                const followButton = document.querySelector(".follow");
+                const followerSpan = document.querySelector(".follow-info span");
+                let followers = parseInt(followerSpan.textContent) || 0;
+
+                if (isFollowing) {
+                    followButton.innerHTML = '<i class="fa-regular fa-heart"></i> Follow';
+                    followerSpan.textContent = `${followers - 1} followers`;
+                } else {
+                    followButton.innerHTML = '<i class="fa-solid fa-xmark"></i> Unfollow';
+                    followerSpan.textContent = `${followers + 1} followers`;
+                }
+
+                console.log("📌 Cập nhật danh sách theo dõi thành công:", updatedFollowedStories);
+            } catch (error) {
+                
+            }
+        };
+
+        //search story
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchInput = document.getElementById("search-input");
+            const searchButton = document.getElementById("search-button");
+
+            function handleSearch() {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    window.location.href = `genre.html?search=${encodeURIComponent(searchTerm)}`;
+                }
+            }
+
+            searchButton.addEventListener("click", handleSearch);
+            searchInput.addEventListener("keypress", (event) => {
+                if (event.key === "Enter") {
+                    handleSearch();
+                }
+            });
+        }); 
+
+        function redirectToHome() {
+            window.location.href = "home.html";
+        }
+        function redirectToGenre(genre) {
+            window.location.href = `genre.html?theloai=${encodeURIComponent(genre)}`;
+        }
+
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        function redirectToStoryPage(story) {
+            window.location.href = `Novel.html?story=${encodeURIComponent(story.title)}`;
+        }
+
+        async function redirectToAccount() {
+            try {
+                const response = await fetch("/api/check-login", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": localStorage.getItem("sessionId") || ""
+                    }
+                });
+
+                const data = await response.json();
+                if (data.loggedIn) {
+                    window.location.href = "account.html";
+                } else {
+                    window.location.href = "account.html?mode=signin";
+                }
+            } catch (error) {
+                console.error("Lỗi kiểm tra đăng nhập:", error);
+                window.location.href = "account.html?mode=signin";
+            }
+        }
+        
+        // Đóng dropdown khi click ngoài
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                document.getElementById("myDropdown").classList.remove("show");
+            }
+        };
+        function redirectToAccount() {
+            const isLoggedIn = localStorage.getItem("loggedInUser"); 
+
+            if (isLoggedIn) {
+                window.location.href = "account.html";
+            } else {
+                window.location.href = "account.html?mode=signin";
+            }
+        }
+
+        function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                const dropdowns = document.getElementsByClassName("dropcontent");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        };
+        
+        // Load profile pictures
+        function loadProfilePictures() {
+            let user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (user && user.profilePic) {
+                document.querySelectorAll(".profile-pic").forEach(img => {
+                    img.src = user.profilePic;
+                });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadProfilePictures);
+    </script>
+</body>
+</html>

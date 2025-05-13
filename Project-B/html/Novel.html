@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Name Novel</title>
+    <link rel="icon" href="https://lh3.google.com/u/1/d/1btktrYFS3By6IBlJWjCJ6SJnSm706KrQ=w1876-h972-iv1">
+
+    <style>
+        /*Header*/
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            padding: 10px;
+            background-image: url("https://img.freepik.com/free-vector/white-abstract-background_23-2148809724.jpg");
+        }
+
+        header img {
+            width: 100%;
+            height: auto;
+        }
+
+        header a{text-decoration: none;color:azure;}
+
+        header .home-logo {
+            width: 70px;
+            height: 30px;
+            padding: 15px;
+        }
+        header .logo, 
+        header .right-logo {
+            width: 20px;
+            height: 20px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+
+        header .right-logo img{
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        header h1 {
+            margin: 10px 0;
+        }
+
+        nav {
+            background-color: rgb(46, 46, 46);
+            color: white;
+            padding: 10px 0;
+        }
+
+        nav ul {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 5px 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: whitesmoke;
+            font-size: 8px;
+        }
+
+        .dropdown {
+            position: relative;
+            text-align: center;
+        }
+
+        .dropbtn {
+            font-size: 8px;
+            border: none;
+            background-color: transparent;
+            color: whitesmoke;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .dropcontent {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            text-align: center;
+            min-width: 50px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 4;
+            width: 150px;
+        }
+
+        .dropcontent a {
+            color: black;
+            padding: 10px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropcontent a:hover {
+            background-color: gray;
+            color: #ddd;
+        }
+
+        .show {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: start; 
+            gap: 12px; 
+        }
+
+        .show > * { 
+            flex: 0 1 calc(20% - 10px);
+            box-sizing: border-box; 
+        }
+
+        .find {
+            position: relative;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .find input {
+            width: 100%;
+            padding: 10px 40px 10px 10px; 
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            height: 8px;
+            font-size: 8px;
+        }
+
+        .find .icon {
+            position: absolute;
+            top: 50%;
+            right: 10px; 
+            transform: translateY(-50%);
+            color: #888;
+            cursor: pointer;
+        }
+
+        .find .icon:hover {
+            color: #333; 
+        }
+
+        .logo {margin-left: 2%;}
+        .right-logo {
+            margin-right: 2%;
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .right-logo:hover .account-dropdown {
+            display: block;
+        }
+
+        main {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            padding: 10px;
+            background-color: #888;
+        }
+        /*container*/
+        main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: #ffffff;
+        }
+        .container .NovelName {font-size: 24px;}
+        .info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 50px;
+            padding: 10px;
+        }
+        
+        .info img {width: 250px;height: auto;}
+        .info-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+        }
+        .info-detail h1 {
+            display: none;
+        }
+        .info-detail .follow-info,
+        .info-detail .buttons {
+            margin-top: 10px;
+            margin-bottom: 10px; 
+        }
+        .info-detail button {
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            background-color: #00d9ff;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .info-detail button:hover {
+            background-color: #00b3e6;
+        }
+        .NumOfchapter {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+        }
+        .NumOfchapter ul {
+            max-height: 700px;
+            padding-bottom: 20px;
+            margin: 0;
+            border: 1px solid #ccc;
+            background-color: #ebebeb;
+            list-style:decimal;
+            scroll-behavior: smooth;
+        }
+        .NumOfchapter li {
+            padding-top: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .NumOfchapter li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 20px;
+        }
+        /*footer*/
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #1b1b1be8;
+            border-top: 1px solid #ddd;
+            color: white;
+            font-size: 14px;
+        }
+        .tothetop button {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            width: 45px;
+            border: 1px solid #000000;
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.096);
+            color: rgb(0, 255, 242);
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        /* Desktop View */
+        @media (min-width: 768px) {
+            main {
+                gap: 10px; 
+                padding: 10px;
+            }
+
+            header {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+            }
+
+            header img{
+                display: flex;
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+            }
+            
+            header .home-logo {
+                width: 330px;
+                height: 120px;
+                padding: 15px;
+            }
+
+            header .logo,
+            header .right-logo {
+                width: 50px;
+                height: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            nav ul {
+                flex-direction: row;
+                justify-content: center;
+                list-style: none;
+                padding: 10px;
+                margin: 0;
+            }
+            nav ul li {
+                margin: 0 15px;
+            }
+            nav ul li a{
+                font-size: 16px;
+            }
+
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+
+            .dropcontent {
+                width: 700px;
+                margin-left: -170px;
+                min-width: 120px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            }
+
+            .dropbtn{font-size: 16px;}
+            .find{width: 200px;}
+            .find input{font-size: 16px;}
+
+            .container {
+                width: 60%;
+            }
+            .container .NovelName {
+                display: none;
+            }
+            .info {
+                flex-direction: row;
+            }
+            .info-detail h1{
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="logo" href="home.html"><img src="https://i.postimg.cc/B66gbNSH/HUB-1.png" width="50px" height="50px" alt=""></a>
+        <a href="home.html" class="home-logo"><img src="https://i.postimg.cc/bvLgq4hq/logo-web-novel-Canvases-Landscape-i1.png" alt=""></a>
+        <div class="right-logo" onclick="redirectToAccount()">
+            <img class="profile-pic" src="default-profile.png" alt="Profile Picture">
+        </div>   
+    </header>
+    <nav>
+        <ul>
+            <li><a href="home.html">Trang Chủ</a></li>
+            <li class="dropdown">
+                <button onclick="toggleDropdown()" class="dropbtn">Thể Loại</button>
+                <div id="myDropdown" class="dropcontent">
+                    <a href="#" onclick="redirectToGenre('all')">Tất cả thể loại</a>
+                    <a href="#" onclick="redirectToGenre('Hành Động')">Hành Động</a>
+                    <a href="#" onclick="redirectToGenre('Lãng Mạn')">Lãng Mạn</a>
+                    <a href="#" onclick="redirectToGenre('Hài Hước')">Hài Hước</a>
+                    <a href="#" onclick="redirectToGenre('Giả Tưởng')">Giả Tưởng</a>
+                    <a href="#" onclick="redirectToGenre('Võ Thuật')">Võ Thuật</a>
+                    <a href="#" onclick="redirectToGenre('Phiêu Lưu')">Phiêu Lưu</a>
+                    <a href="#" onclick="redirectToGenre('Hậu Cung')">Hậu Cung</a>
+                    <a href="#" onclick="redirectToGenre('Manga')">Manga</a>
+                    <a href="#" onclick="redirectToGenre('Manhua')">Manhua</a>
+                    <a href="#" onclick="redirectToGenre('Manhwa')">Manhwa</a>
+                    <a href="#" onclick="redirectToGenre('Kinh dị')">Kinh dị</a>
+                    <a href="#" onclick="redirectToGenre('Huyền Huyễn')">Huyền Huyễn</a>
+                    <a href="#" onclick="redirectToGenre('Trinh Thám')">Trinh Thám</a>
+                    <a href="#" onclick="redirectToGenre('Lịch Sử')">Lịch Sử</a>
+                    <a href="#" onclick="redirectToGenre('Khoa học')">Khoa học</a>
+                    <a href="#" onclick="redirectToGenre('Viễn Tưởng')">Viễn Tưởng</a>
+                    <a href="#" onclick="redirectToGenre('Siêu nhiên')">Siêu nhiên</a>
+                    <a href="#" onclick="redirectToGenre('Tu Tiên')">Tu Tiên</a>
+                    <a href="#" onclick="redirectToGenre('Hentai')">Hentai</a>
+                    <a href="#" onclick="redirectToGenre('Doujinshi')">Doujinshi</a>
+                    <a href="#" onclick="redirectToGenre('Webtoon')">Webtoon</a>
+                    <a href="#" onclick="redirectToGenre('Đời Thường')">Đời Thường</a>
+                    <a href="#" onclick="redirectToGenre('Fantasy')">Fantasy</a>
+                </div>
+            </li>
+            <li><a href="Follow.html">Theo Dõi</a></li>
+            <li><a href="">Liên Hệ</a></li>
+            <li>
+                <div class="find">
+                    <input type="text" id="search-input" placeholder="Tìm Truyện">
+                    <span class="icon" id="search-button">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    <main>
+        <div class="container">
+            <h1 class="NovelName"></h1>
+            <div class="info">
+                <img src="" alt="">
+                <div class="info-detail"></div>
+            </div>
+            <div class="NumOfchapter">
+                <h2>Chapter List</h2>
+                <ul></ul>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="tothetop">
+            <button onclick="scrollToTop()" id="myBtn" title="Go to top"><i class="fa fa-angle-up" aria-hidden="true"></i></button>
+        </div>
+        <p>&copy; 2025 Truyện Tranh Online. All Rights Reserved.</p>
+    </footer>
+    <script src="https://kit.fontawesome.com/508b433abc.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>       
+        $(window).scroll(function() {
+            if ($(document).scrollTop() > 100) {
+                $("#myBtn").show();
+            } else {
+                $("#myBtn").hide();
+            }
+        });
+        function scrollToTop() {
+            $("html, body").animate({scrollTop: 0}, 700);
+        }
+
+        //search story
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchInput = document.getElementById("search-input");
+            const searchButton = document.getElementById("search-button");
+
+            function handleSearch() {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    window.location.href = `genre.html?search=${encodeURIComponent(searchTerm)}`;
+                }
+            }
+
+            searchButton.addEventListener("click", handleSearch);
+            searchInput.addEventListener("keypress", (event) => {
+                if (event.key === "Enter") {
+                    handleSearch();
+                }
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const storyTitle = urlParams.get("story");
+
+            if (!storyTitle) {
+                alert("Không tìm thấy tên truyện trong URL.");
+                return;
+            }
+
+            try {
+                // Lấy danh sách truyện từ API
+                const response = await fetch("/api/stories");
+                if (!response.ok) throw new Error("Không thể lấy dữ liệu từ server");
+
+                const stories = await response.json();
+                console.log("📌 Danh sách truyện từ API:", stories);
+
+                // Tìm truyện theo title
+                const currentStory = stories.find(s => s.title === storyTitle);
+                if (!currentStory) {
+                    Swal.fire({ icon: "error", text: "Không tìm thấy truyện", confirmButtonText: "OK" });
+                    return;
+                }
+
+                // Lấy thông tin người dùng từ API
+                const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
+                if (!storedData || !storedData.user || !storedData.user.userId) {
+                    Swal.fire({ icon: "error", text: "User chưa đăng nhập", confirmButtonText: "OK" });
+                    return;
+                }
+
+                const userId = storedData.user.userId;
+                const userResponse = await fetch(`/api/user?id=${userId}`);
+                if (!userResponse.ok) throw new Error("Không thể lấy thông tin người dùng");
+
+                const user = await userResponse.json();
+                console.log("📌 Thông tin người dùng:", user);
+
+                // Kiểm tra xem truyện đã được theo dõi chưa
+                const isFollowed = user.followedStories.includes(currentStory._id);
+
+                // Hiển thị thông tin truyện
+                document.querySelector(".NovelName").textContent = currentStory.title;
+                document.querySelector(".info img").src = currentStory.image;
+                document.querySelector(".info img").alt = currentStory.title;
+
+                updateHistory(currentStory._id);
+
+                // Cập nhật nút theo dõi
+                const followButtonHTML = isFollowed
+                    ? `<button class="follow" onclick="followStory('${currentStory._id}')"><i class="fa-solid fa-xmark"></i> Unfollow</button>`
+                    : `<button class="follow" onclick="followStory('${currentStory._id}')"><i class="fa-regular fa-heart"></i> Follow</button>`;
+
+                document.querySelector(".info-detail").innerHTML = `
+                    <h1>${currentStory.title}</h1>
+                    <p>Author: ${currentStory.author}</p>
+                    <p>Status: ${currentStory.status}</p>
+                    <p>Genre: ${currentStory.genre}</p>
+                    <div class="follow-info">
+                        ${followButtonHTML}
+                        <span>${currentStory.followers || 0} followers</span>
+                    </div>
+                    <div class="buttons">
+                        <button id="oldest-chapter">Oldest Chapter</button>
+                        <button id="newest-chapter">Newest Chapter</button>
+                    </div>
+                `;
+
+                // Hiển thị danh sách chương
+                const chapterList = Object.keys(currentStory.chapters).sort((a, b) => a - b); // Ensure chapters are sorted
+                const chapterLinks = chapterList
+                    .map(chapter => 
+                        `<li><a href="readWeb.html?story=${encodeURIComponent(currentStory._id)}&chapter=${encodeURIComponent(chapter)}">${chapter}</a></li>`
+                    ).join('');
+
+                document.querySelector(".NumOfchapter ul").innerHTML = chapterLinks;
+
+                // Set up Oldest and Newest Chapter buttons
+                if (chapterList.length > 0) {
+                    document.getElementById("oldest-chapter").addEventListener("click", () => {
+                        window.location.href = `readWeb.html?story=${encodeURIComponent(currentStory._id)}&chapter=${encodeURIComponent(chapterList[0])}`;
+                    });
+
+                    document.getElementById("newest-chapter").addEventListener("click", () => {
+                        window.location.href = `readWeb.html?story=${encodeURIComponent(currentStory._id)}&chapter=${encodeURIComponent(chapterList[chapterList.length - 1])}`;
+                    });
+                }
+
+            } catch (error) {
+                console.error("Lỗi:", error);
+                Swal.fire({ icon: "error", text: error.message, confirmButtonText: "OK" });
+            }
+        });
+
+        async function followStory(storyId) {
+            try {
+                // Lấy thông tin người dùng từ API
+                const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
+                if (!storedData || !storedData.user || !storedData.user.userId) {
+                    Swal.fire({ icon: "error", text: "User chưa đăng nhập", confirmButtonText: "OK" });
+                    return;
+                }
+
+                const userId = storedData.user.userId;
+                const userResponse = await fetch(`/api/user?id=${userId}`);
+                if (!userResponse.ok) throw new Error("Không thể lấy thông tin người dùng");
+
+                const user = await userResponse.json();
+                if (!userResponse.ok) throw new Error("Không thể lấy thông tin người dùng");
+
+                let isFollowing = user.followedStories.includes(storyId);
+                let updatedFollowedStories;
+
+                if (isFollowing) {
+                    updatedFollowedStories = user.followedStories.filter(id => id !== storyId);
+                } else {
+                    updatedFollowedStories = [...user.followedStories, storyId];
+                }
+
+                // Gửi yêu cầu cập nhật danh sách truyện theo dõi lên server
+                const response = await fetch(`/api/user/${user._id}/followedStories`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ followedStories: updatedFollowedStories })
+                });
+
+                if (!response.ok) throw new Error("Cập nhật trên server thất bại.");
+
+                // Cập nhật giao diện
+                const followButton = document.querySelector(".follow");
+                const followerSpan = document.querySelector(".follow-info span");
+                let followers = parseInt(followerSpan.textContent) || 0;
+
+                if (isFollowing) {
+                    followButton.innerHTML = '<i class="fa-regular fa-heart"></i> Follow';
+                    followerSpan.textContent = `${followers - 1} followers`;
+                } else {
+                    followButton.innerHTML = '<i class="fa-solid fa-xmark"></i> Unfollow';
+                    followerSpan.textContent = `${followers + 1} followers`;
+                }
+
+                console.log("📌 Cập nhật danh sách theo dõi thành công:", updatedFollowedStories);
+            } catch (error) {
+                console.error("Lỗi:", error);
+                Swal.fire({ icon: "error", text: error.message, confirmButtonText: "OK" });
+            }
+        }
+
+        async function updateHistory(storyId) {
+            console.log("📌 updateHistory() called with:", storyId);
+
+            try {
+                // Fetch the currently logged-in user
+                const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
+                if (!storedData || !storedData.user || !storedData.user.userId) {
+                    Swal.fire({ icon: "error", text: "User chưa đăng nhập", confirmButtonText: "OK" });
+                    return;
+                }
+
+                const userId = storedData.user.userId;
+                const userResponse = await fetch(`/api/user?id=${userId}`);
+                if (!userResponse.ok) throw new Error("Không thể lấy thông tin người dùng");
+
+                const user = await userResponse.json();
+                console.log("User ID being sent:", userId);
+
+                // Get user's existing history (assuming it's stored in user.history)
+                let history = user.history || [];
+
+                // Remove duplicate entries
+                history = history.filter(id => id !== storyId);
+
+                // Add new story ID to the front
+                history.unshift(storyId);
+
+                // Limit history to 10 items
+                if (history.length > 10) {
+                    history = history.slice(0, 10);
+                }
+
+                // Update the history in the database
+                const updateResponse = await fetch(`/api/user/${userId}/history`, { 
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ history })
+                });
+
+                if (!updateResponse.ok) throw new Error("Không thể cập nhật lịch sử đọc");
+
+                console.log("✅ Lịch sử đọc đã được cập nhật.");
+            } catch (error) {
+                console.error("❌ Lỗi khi cập nhật lịch sử đọc:", error);
+            }
+        }
+
+        function redirectToGenre(genre) {
+            window.location.href = `genre.html?theloai=${encodeURIComponent(genre)}`;
+        }
+
+        async function redirectToAccount() {
+            try {
+                const response = await fetch("/api/check-login", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": localStorage.getItem("sessionId") || ""
+                    }
+                });
+
+                const data = await response.json();
+                if (data.loggedIn) {
+                    window.location.href = "account.html";
+                } else {
+                    window.location.href = "account.html?mode=signin";
+                }
+            } catch (error) {
+                console.error("Lỗi kiểm tra đăng nhập:", error);
+                window.location.href = "account.html?mode=signin";
+            }
+        }
+
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Đóng dropdown khi click ngoài
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                document.getElementById("myDropdown").classList.remove("show");
+            }
+        };
+        function redirectToAccount() {
+            const isLoggedIn = localStorage.getItem("loggedInUser"); 
+
+            if (isLoggedIn) {
+                window.location.href = "account.html";
+            } else {
+                window.location.href = "account.html?mode=signin";
+            }
+        }
+
+        function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                const dropdowns = document.getElementsByClassName("dropcontent");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        };
+        
+        // Load profile pictures
+        function loadProfilePictures() {
+            let user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (user && user.profilePic) {
+                document.querySelectorAll(".profile-pic").forEach(img => {
+                    img.src = user.profilePic;
+                });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadProfilePictures);
+    </script>
+</body>
+</html>

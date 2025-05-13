@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=0">
+    <title>No Name Novel</title>
+    <link rel="icon" href="https://lh3.google.com/u/1/d/1btktrYFS3By6IBlJWjCJ6SJnSm706KrQ=w1876-h972-iv1">
+
+    <style>
+
+        /*Header*/
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            padding: 10px;
+            background-image: url("https://img.freepik.com/free-vector/white-abstract-background_23-2148809724.jpg");
+        }
+
+        header img {
+            width: 100%;
+            height: auto;
+        }
+
+        header a{text-decoration: none;color:azure;}
+
+        header .home-logo {
+            width: 70px;
+            height: 30px;
+            padding: 15px;
+        }
+        header .logo, 
+        header .right-logo {
+            width: 20px;
+            height: 20px;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+
+        header .right-logo img{
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        header h1 {
+            margin: 10px 0;
+        }
+
+        nav {
+            background-color: rgb(46, 46, 46);
+            color: white;
+            padding: 10px 0;
+        }
+
+        nav ul {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 5px 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: whitesmoke;
+            font-size: 8px;
+        }
+
+        .dropdown {
+            position: relative;
+            text-align: center;
+        }
+
+        .dropbtn {
+            font-size: 8px;
+            border: none;
+            background-color: transparent;
+            color: whitesmoke;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .dropcontent {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            text-align: center;
+            min-width: 50px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 4;
+            width: 150px;
+        }
+
+        .dropcontent a {
+            color: black;
+            padding: 10px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropcontent a:hover {
+            background-color: gray;
+            color: #ddd;
+        }
+
+        .show {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: start; 
+            gap: 12px; 
+        }
+
+        .show > * { 
+            flex: 0 1 calc(20% - 10px);
+            box-sizing: border-box; 
+        }
+
+        .find {
+            position: relative;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .find input {
+            width: 100%;
+            padding: 10px 40px 10px 10px; 
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            height: 8px;
+            font-size: 8px;
+        }
+
+        .find .icon {
+            position: absolute;
+            top: 50%;
+            right: 10px; 
+            transform: translateY(-50%);
+            color: #888;
+            cursor: pointer;
+        }
+
+        .find .icon:hover {
+            color: #333; 
+        }
+
+        .logo {margin-left: 2%;}
+        .right-logo {
+            margin-right: 2%;
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .right-logo:hover .account-dropdown {
+            display: block;
+        }
+
+        main {
+            padding: 20px;
+            background-color: #888;
+        }
+
+        /* Main Content */
+        .main {
+            border: 0px solid transparent;
+            border-radius: 25px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            height: 700px;
+            background-color: white;
+        }
+
+        /* Forms */
+        form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+        form input, .signin, p {
+            padding: 5px;
+            margin-bottom: 25px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 8px;
+        }
+        form .signin {
+            background-color: #007bff;
+            color: white;
+            width: 30%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        form input {
+            width: 70%;
+            border: 1px solid #888;
+            border-radius: 5px;
+        }
+        form input:hover ,button:hover {
+            outline: none;
+            border: 1px solid #007bff;
+        }
+        form input:focus ,button:focus {
+            outline: none;
+            border: 1px solid #007bff;
+        }
+        form .fa-solid {
+            position: absolute;
+            right: 16%;
+            top: 12%;
+            font-size: 10px;
+        }
+        .forgotpassword {
+            text-align: center;
+            font-size: 11px;
+            margin-bottom: 20px;
+        }
+        .remember {
+            display: flex;
+            align-items: center;
+            height: 10%;
+            font-size: 11px;
+        }
+        .remember input{
+            width: 10%;
+            height: 30%;
+            margin-left: 5%;
+        }
+        .remember label{
+            margin-right: 5%;
+        }
+        .remember p{
+            font-size: 11px;
+            margin: 0;
+            margin-left: 5%;
+        }
+
+        /*account */
+        .account-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            max-width: 300px;
+            height: 90%;
+            margin-left: 10px;
+            margin-right: 10px;
+            font-size: 14px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .left-column, .right-column {
+            width: 70%;
+            padding: 10px;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .left-column p {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: #e4e4e4;
+            text-align: left;
+        }
+
+        .left-column .hidden {
+            display: none;
+        }
+        .left-column .hidden label {
+            font-size: 16px;
+            height: 30px;
+            text-align: left;
+            align-items: left;
+        }
+        .left-column .hidden button {
+            width: 50%; 
+            height: 20%;
+            align-self: center;
+            border-radius: 5px;
+            background-color: #0084ffce;
+            color: #ffffff;
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .account-info {
+            padding: 10px;
+        }
+
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            margin: 10px auto;
+        }
+
+        .change-picture {
+            display: block;
+            margin-top: 10px;
+            padding: 8px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 55%;
+            height: 25%;
+            margin-bottom: 15px;
+        }
+
+        .change-picture:hover {
+            background: #33fff5;
+        }
+
+        .profile-container p {
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .buttons button {
+            width: 200px;
+            padding: 8px;
+            margin: 5px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .buttons button:hover {
+            background: #218838;
+        }
+
+        /*foot-content*/
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #1b1b1be8;
+            border-top: 1px solid #ddd;
+            color: white;
+        }
+        /* Desktop View */
+        @media (min-width: 768px) {
+            .main {
+                margin-left: 25%;
+                margin-right: 25%;
+                height: 600px;
+            }
+
+            header {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+            }
+
+            header img{
+                display: flex;
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+            }
+            
+            header .home-logo {
+                width: 330px;
+                height: 120px;
+                padding: 15px;
+            }
+
+            header .logo,
+            header .right-logo {
+                width: 50px;
+                height: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            nav ul {
+                flex-direction: row;
+                justify-content: center;
+                list-style: none;
+                padding: 10px;
+                margin: 0;
+            }
+            nav ul li {
+                margin: 0 15px;
+            }
+            nav ul li a{
+                font-size: 16px;
+            }
+
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+
+            .dropcontent {
+                width: 700px;
+                margin-left: -170px;
+                min-width: 120px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            }
+
+            .dropbtn{font-size: 16px;}
+            .find{width: 200px;}
+            .find input{font-size: 16px;}
+
+            form {font-size: 22px;}
+            form input, .signin, p {
+                font-size: 16px;
+            }
+            form input {
+                width: 50%;
+            }
+            form .signin {
+                width: 20%;
+            }
+            form .fa-solid {
+                right: 26%;
+                font-size: 16px;
+            }
+            .remember label{
+                width: 20%;
+                font-size: 16px;
+            }
+            .remember p,.remember input{
+                font-size: 16px;
+                margin-left: 10%;
+            }
+            .forgotpassword {
+                font-size: 16px;
+            }
+            .account-menu {
+                margin-top: -45px;
+                flex-direction: row;
+                height: 400px;
+            }
+            .profile-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                max-width: 700px;
+                height: 100%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .left-column,.right-column {
+                width: 40%;
+                height: 75%;
+            }
+            .left-column .hidden label {
+                height: 20px;
+            }
+            .buttons {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .profile-container p{font-size: 16px;}
+            .profile-container .change-picture{width: 40%;height: 15%;}
+        }
+        
+    </style>
+</head>
+<body>
+    <header>
+        <a class="logo" href="home.html"><img src="https://i.postimg.cc/B66gbNSH/HUB-1.png" width="50px" height="50px" alt=""></a>
+        <a href="home.html" class="home-logo"><img src="https://i.postimg.cc/bvLgq4hq/logo-web-novel-Canvases-Landscape-i1.png" alt=""></a>
+        <div class="right-logo" onclick="redirectToAccount()">
+            <img class="profile-pic" src="default-profile.png" alt="Profile Picture">
+        </div>        
+    </header>
+    <nav>
+        <ul>
+            <li><a href="home.html">Trang Chủ</a></li>
+            <li class="dropdown">
+                <button onclick="toggleDropdown()" class="dropbtn">Thể Loại</button>
+                <div id="myDropdown" class="dropcontent">
+                    <a href="#" onclick="redirectToGenre('all')">Tất cả thể loại</a>
+                    <a href="#" onclick="redirectToGenre('Hành Động')">Hành Động</a>
+                    <a href="#" onclick="redirectToGenre('Lãng Mạn')">Lãng Mạn</a>
+                    <a href="#" onclick="redirectToGenre('Hài Hước')">Hài Hước</a>
+                    <a href="#" onclick="redirectToGenre('Giả Tưởng')">Giả Tưởng</a>
+                    <a href="#" onclick="redirectToGenre('Võ Thuật')">Võ Thuật</a>
+                    <a href="#" onclick="redirectToGenre('Phiêu Lưu')">Phiêu Lưu</a>
+                    <a href="#" onclick="redirectToGenre('Hậu Cung')">Hậu Cung</a>
+                    <a href="#" onclick="redirectToGenre('Manga')">Manga</a>
+                    <a href="#" onclick="redirectToGenre('Manhua')">Manhua</a>
+                    <a href="#" onclick="redirectToGenre('Manhwa')">Manhwa</a>
+                    <a href="#" onclick="redirectToGenre('Kinh dị')">Kinh dị</a>
+                    <a href="#" onclick="redirectToGenre('Huyền Huyễn')">Huyền Huyễn</a>
+                    <a href="#" onclick="redirectToGenre('Trinh Thám')">Trinh Thám</a>
+                    <a href="#" onclick="redirectToGenre('Lịch Sử')">Lịch Sử</a>
+                    <a href="#" onclick="redirectToGenre('Khoa học')">Khoa học</a>
+                    <a href="#" onclick="redirectToGenre('Viễn Tưởng')">Viễn Tưởng</a>
+                    <a href="#" onclick="redirectToGenre('Siêu nhiên')">Siêu nhiên</a>
+                    <a href="#" onclick="redirectToGenre('Tu Tiên')">Tu Tiên</a>
+                    <a href="#" onclick="redirectToGenre('Hentai')">Hentai</a>
+                    <a href="#" onclick="redirectToGenre('Doujinshi')">Doujinshi</a>
+                    <a href="#" onclick="redirectToGenre('Webtoon')">Webtoon</a>
+                    <a href="#" onclick="redirectToGenre('Đời Thường')">Đời Thường</a>
+                    <a href="#" onclick="redirectToGenre('Fantasy')">Fantasy</a>
+                </div>
+            </li>
+            <li><a href="Follow.html">Theo Dõi</a></li>
+            <li><a href="">Liên Hệ</a></li>
+            <li>
+                <div class="find">
+                    <input type="text" id="search-input" placeholder="Tìm Truyện">
+                    <span class="icon" id="search-button">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    
+    <main>
+        <div class="main">
+            <div id="signinContainer">
+                <form onsubmit="handleSignIn(event)">
+                    <label for="username"><b>Username</b></label>
+                    <input type="text" id="username" placeholder="Username" required autocomplete="username">
+        
+                    <label for="password"><b>Password</b></label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" placeholder="password" required autocomplete="current-password">
+                        <i class="fa-solid fa-eye" id="togglePassword" onclick="togglePasswordVisibility()"></i>
+                    </div>
+        
+                    <button type="submit" class="signin">Sign In</button>
+                </form>
+        
+                <div class="forgotpassword">
+                    <a href="#">Forgot your password?</a>
+                </div>
+        
+                <div class="remember">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe"> Remember me </label>
+                    <p>Don't have an account? <a href="#" onclick="redirectToSignUp()">Sign Up</a></p>
+                </div>
+            </div>
+        
+            <div id="signupContainer" style="display: none;">
+                <form onsubmit="handleSignUp(event)">
+                    <label for="newUsername"><b>Username</b></label>
+                    <input type="text" id="newUsername" placeholder="Username" required autocomplete="username">
+        
+                    <label for="email"><b>Email</b></label>
+                    <input type="email" id="email" placeholder="Email" required>
+        
+                    <label for="newPassword"><b>Password</b></label>
+                    <div style="position: relative;">
+                        <input type="password" id="newPassword" placeholder="Password" required autocomplete="new-password">
+                        <i class="fa-solid fa-eye" id="toggleNewPassword" onclick="toggleNewPasswordVisibility()"></i>
+                    </div>
+        
+                    <label for="confirmPassword"><b>Confirm Password</b></label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required autocomplete="new-password">
+        
+                    <button type="submit" class="signin">Sign Up</button>
+                </form>
+        
+                <div class="remember">
+                    <input type="checkbox" id="terms">
+                    <label for="terms"> I agree to the terms and conditions </label>
+                    <p>Already have an account? <a href="#" onclick="showSignIn()">Sign In</a></p>
+                </div>
+        
+            </div>
+
+            <div class="account-menu" id="accountMenu" style="display: none;">
+                <div class="profile-container">
+                    <div class="left-column">
+                        <div class="accountForm" id="accountForm">
+                            <h3>Account Information</h3>
+                            <div class="account-info">
+                                <p><b>Username:</b> <span id="accountUsername"></span></p>
+                                <p><b>Email:</b> <span id="accountEmail"></span></p>
+                                <p><b>Birthday:</b> <span id="birthday"></span></p>
+                                <p><b>Gender:</b> <span id="gender"></span></p>
+                            </div>
+                        </div>
+                        <div class="hidden" id="hidden">
+                            <h3>Edit Information</h3>
+                            <form id="updateForm">
+                                <label>Username: <input type="text" id="editUsername"></label><br>
+                                <label>Email: <input type="email" id="editEmail"></label><br>
+                                <label>Birthday: <input type="date" id="editBirthday"></label><br>
+                                <label>Gender: 
+                                    <select id="editGender">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </label><br>
+                                <button type="submit">Update</button>
+                            </form>
+                        </div>
+                    </div>                    
+                    <div class="right-column">
+                        <h3>Profile Picture</h3>
+                        <img class="profile-pic" src="default-profile.png" alt="Profile Picture">
+                        <input 
+                            type="file" 
+                            id="uploadProfilePic" 
+                            style="display: none;" 
+                            onchange="changeProfilePic(event)"
+                            accept="image/*"
+                        >
+                        <button 
+                            onclick="document.getElementById('uploadProfilePic').click()" 
+                            class="change-picture"
+                        >
+                            Change Picture
+                        </button>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button onclick="editProfile()">Edit Profile</button>
+                    <button onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Truyện Tranh Online. All Rights Reserved.</p>
+    </footer>
+    
+    <script src="https://kit.fontawesome.com/508b433abc.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        /*window.addEventListener("load", function() {
+            localStorage.clear(); // Clears all local storage data
+            console.log("LocalStorage has been cleared on server launch.");
+        });*/
+
+        //search story
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchInput = document.getElementById("search-input");
+            const searchButton = document.getElementById("search-button");
+
+            function handleSearch() {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    window.location.href = `genre.html?search=${encodeURIComponent(searchTerm)}`;
+                }
+            }
+
+            searchButton.addEventListener("click", handleSearch);
+            searchInput.addEventListener("keypress", (event) => {
+                if (event.key === "Enter") {
+                    handleSearch();
+                }
+            });
+        });
+        function redirectToGenre(genre) {
+            window.location.href = `genre.html?theloai=${encodeURIComponent(genre)}`;
+        }
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Đóng dropdown khi click ngoài
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                document.getElementById("myDropdown").classList.remove("show");
+            }
+        };
+    
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                const dropdowns = document.getElementsByClassName("dropcontent");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        };
+    
+        // Chuyển đến trang đăng ký
+        function redirectToSignUp() {
+            document.getElementById("signinContainer").style.display = "none";
+            document.getElementById("signupContainer").style.display = "block";
+        }
+
+        // Chuyển về trang đăng nhập
+        function showSignIn() {
+            document.getElementById("signinContainer").style.display = "block";
+            document.getElementById("signupContainer").style.display = "none";
+        }
+
+        // 🔹 Đăng nhập
+        async function handleSignIn(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const rememberMe = document.getElementById("rememberMe")?.checked;
+
+            try {
+                const response = await fetch("http://localhost:3000/api/signin", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+
+                // Check if response is OK
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch {
+                    throw new Error("Invalid server response: " + text);
+                }
+
+                if (!response.ok) throw new Error(data.message || "Login failed");
+
+                // Save user session
+                if (rememberMe) {
+                    localStorage.setItem("loggedInUser", JSON.stringify({ sessionId: data.sessionId, user: data.user }));
+                } else {
+                    sessionStorage.setItem("loggedInUser", JSON.stringify({ sessionId: data.sessionId, user: data.user }));
+                }
+
+                Swal.fire({ icon: "success", text: "Login successful!", confirmButtonText: "OK" });
+                window.location.href = "account.html";
+            } catch (error) {
+                Swal.fire({ icon: "error", text: error.message, confirmButtonText: "OK" });
+            }
+        }
+
+        // 🔹 Đăng ký
+        async function handleSignUp(event) {
+            event.preventDefault();
+
+            try {
+                const username = document.getElementById("newUsername").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("newPassword").value.trim();
+                const confirmPassword = document.getElementById("confirmPassword").value.trim();
+                
+                if (password !== confirmPassword) {
+                    return Swal.fire({ icon: "error", text: "Passwords do not match", confirmButtonText: "OK" });
+                }
+
+                const response = await fetch("http://localhost:3000/api/signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || "Sign-up failed");
+                }
+
+                Swal.fire({ icon: "success", text: "Sign-up successful! Please sign in.", confirmButtonText: "OK" });
+                showSignIn();
+            } catch (error) {
+                Swal.fire({ icon: "error", text: error.message, confirmButtonText: "OK" });
+            }
+        }
+
+
+        //cap nhap
+        function editProfile() {
+            document.getElementById("hidden").style.display = "block";
+            document.getElementById("accountForm").style.display = "none";
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const storedData = JSON.parse(localStorage.getItem("loggedInUser")) || JSON.parse(sessionStorage.getItem("loggedInUser"));
+            console.log(storedData);
+
+            const userId = storedData.user.userId; // Correct key
+            const userEndpoint = `/api/user?id=${userId}`;
+            console.log(userId); 
+
+            // 🔹 Lấy thông tin người dùng
+            async function fetchUserInfo() {
+                try {
+                    const response = await fetch(userEndpoint);
+                    if (!response.ok) throw new Error("Không thể lấy thông tin người dùng");
+
+                    const userData = await response.json();
+
+                    // Hiển thị thông tin người dùng
+                    document.getElementById("accountUsername").textContent = userData.username || "";
+                    document.getElementById("accountEmail").textContent = userData.email || "";
+                    document.getElementById("birthday").textContent = userData.birthday || "";
+                    document.getElementById("gender").textContent = userData.gender || "";
+
+                    // Đổ dữ liệu vào form cập nhật
+                    document.getElementById("editUsername").value = userData.username || "";
+                    document.getElementById("editEmail").value = userData.email || "";
+                    document.getElementById("editBirthday").value = userData.birthday || "";
+                    document.getElementById("editGender").value = userData.gender || "";
+                } catch (error) {
+                    console.error("Lỗi khi lấy dữ liệu:", error);
+                }
+            }
+
+            // 🔹 Xử lý cập nhật thông tin người dùng
+            document.getElementById("updateForm").addEventListener("submit", async (event) => {
+                event.preventDefault();
+
+                // Thu thập dữ liệu từ form
+                const updatedUser = {
+                    username: document.getElementById("editUsername").value.trim(),
+                    email: document.getElementById("editEmail").value.trim(),
+                    birthday: document.getElementById("editBirthday").value,
+                    gender: document.getElementById("editGender").value
+                };
+
+                try {
+                    const response = await fetch(userEndpoint, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(updatedUser)
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        Swal.fire({ icon: "success", text: result.message, confirmButtonText: "OK" });
+                        fetchUserInfo(); // Cập nhật lại thông tin trên giao diện
+                        document.getElementById("hidden").style.display = "none";
+                        document.getElementById("accountForm").style.display = "block";
+                    } else {
+                        Swal.fire({ icon: "error", text: result.message, confirmButtonText: "OK" });
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi cập nhật dữ liệu:", error);
+                }
+            });
+
+            fetchUserInfo();
+        });
+
+         // Toggle password visibility (Sign-in)
+         function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const icon = document.getElementById('togglePassword');
+    
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+    
+        // Toggle password visibility (Sign-up)
+        function toggleNewPasswordVisibility() {
+            const passwordField = document.getElementById('newPassword');
+            const icon = document.getElementById('toggleNewPassword');
+    
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }   
+        }
+
+        function showAccountMenu() {
+            const storedData = JSON.parse(sessionStorage.getItem("loggedInUser")) || JSON.parse(localStorage.getItem("loggedInUser"));
+
+            if (storedData && storedData.user) {
+                const user = storedData.user;
+                document.getElementById("accountUsername").textContent = user.username;
+                document.getElementById("accountEmail").textContent = user.email;
+                document.getElementById("birthday").textContent = user.birthday;
+                document.getElementById("gender").textContent = user.gender;
+
+                document.getElementById("accountMenu").style.display = "block";
+                document.getElementById("signinContainer").style.display = "none";
+            } else {
+                // Ensure menu is hidden if no user is logged in
+                document.getElementById("accountMenu").style.display = "none";
+                document.getElementById("signinContainer").style.display = "block";
+            }
+        }
+
+        // Run the function on page load
+        window.onload = showAccountMenu;
+
+
+        // 🔹 Đăng xuất
+        function logout() {
+            localStorage.removeItem("loggedInUser");  // ✅ Remove correct key
+            sessionStorage.removeItem("loggedInUser"); // ✅ Remove correct key
+
+            document.getElementById("accountMenu").style.display = "none";
+            document.getElementById("signinContainer").style.display = "block";
+
+            Swal.fire({ icon: "success", text: "Logout successful!", confirmButtonText: "OK" });
+        }
+
+    </script>
+    
+</body>
+</html>
