@@ -57,6 +57,7 @@ const getContentType = (filePath) => {
 const server = http.createServer(async (req, res) => {
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
+    const { ObjectId } = require("mongodb");
 
     // API Đăng ký
     if (req.method === "POST" && pathname === "/api/signup") {
@@ -344,6 +345,100 @@ const server = http.createServer(async (req, res) => {
             return res.end(JSON.stringify({ message: "Lỗi server", error: error.message }));
         }
     }    
+    
+    // API add-stories
+    if (req.method === "POST" && pathname === "/add-story") {
+        let body = "";
+        req.on("data", chunk => body += chunk);
+        req.on("end", async () => {
+            try {
+                const { _id, title, author, status, genre, userId } = JSON.parse(body);
+
+                if (!_id || !title || !author || !genre || !userId) {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify({ message: "Thiếu dữ liệu", success: false }));
+                }
+
+                const newStory = {
+                    _id,
+                    title,
+                    image: "",
+                    chapters: {},
+                    views: "0",
+                    followers: 0,
+                    author,
+                    status: status || "Đang cập nhật",
+                    genre: genre.split(",").map(g => g.trim()) // Chuyển genre thành mảng nếu cần
+                };
+
+                await dbStory.collection("story").insertOne(newStory);
+
+                const userCol = dbUser.collection("users");
+
+                // Kiểm tra nếu userId hợp lệ
+                if (!ObjectId.isValid(userId)) {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify({ message: "User ID không hợp lệ", success: false }));
+                }
+
+                const userObjectId = new ObjectId(userId);  
+                const existingUser = await userCol.findOne({ _id: userObjectId });
+
+                if (existingUser) {
+                    // Đảm bảo rằng uploadstories là một mảng
+                    if (!existingUser.uploadstories) {
+                        existingUser.uploadstories = [];
+                    }
+
+                    // Thêm truyện vào uploadstories của user
+                    await userCol.updateOne(
+                        { _id: userObjectId },
+                        { $addToSet: { uploadstories: _id } }
+                    );
+                }
+
+                res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ message: "Thêm truyện thành công", success: true }));
+            } catch (err) {
+                console.error(err);
+                res.writeHead(500, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ message: "Lỗi server", success: false }));
+            }
+        });
+        return;
+    }
+
+    // API lấy danh sách truyện đã tải lên của user
+    if (req.method === "GET" && pathname.startsWith("/user-stories/")) {
+        const userId = pathname.split("/").pop();
+
+        try {
+            // Kiểm tra userId hợp lệ
+            if (!ObjectId.isValid(userId)) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ message: "User ID không hợp lệ", success: false }));
+            }
+
+            const user = await dbUser.collection("users").findOne({ _id: new ObjectId(userId) });
+
+            if (!user || !user.uploadstories || user.uploadstories.length === 0) {
+                res.writeHead(200, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify([]));
+            }
+
+            const stories = await dbStory.collection("story").find({
+                _id: { $in: user.uploadstories.map(id => new ObjectId(id)) }
+            }).toArray();
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(stories));
+        } catch (err) {
+            console.error(err);
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ message: "Lỗi server", success: false }));
+        }
+        return;
+    }  
     
     // update history
     if (req.method === "PUT" && pathname.startsWith("/api/user/") && pathname.endsWith("/history")) {
