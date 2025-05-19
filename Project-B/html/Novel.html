@@ -569,7 +569,6 @@
 
         async function followStory(storyId) {
             try {
-                // Lấy thông tin người dùng từ API
                 const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
                 if (!storedData || !storedData.user || !storedData.user.userId) {
                     Swal.fire({ icon: "error", text: "User chưa đăng nhập", confirmButtonText: "OK" });
@@ -579,9 +578,7 @@
                 const userId = storedData.user.userId;
                 const userResponse = await fetch(`/api/user?id=${userId}`);
                 if (!userResponse.ok) throw new Error("Không thể lấy thông tin người dùng");
-
                 const user = await userResponse.json();
-                if (!userResponse.ok) throw new Error("Không thể lấy thông tin người dùng");
 
                 let isFollowing = user.followedStories.includes(storyId);
                 let updatedFollowedStories;
