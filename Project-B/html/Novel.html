@@ -589,29 +589,35 @@
                     updatedFollowedStories = [...user.followedStories, storyId];
                 }
 
-                // Gửi yêu cầu cập nhật danh sách truyện theo dõi lên server
-                const response = await fetch(`/api/user/${user._id}/followedStories`, {
+                // 1. Cập nhật số followers
+                const updateFollowersRes = await fetch(`/api/stories?id=${storyId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ increment: isFollowing ? -1 : 1 })
+                });
+                if (!updateFollowersRes.ok) throw new Error("Cập nhật followers thất bại.");
+
+                // 2. Cập nhật danh sách followedStories của user
+                const updateUserFollowRes = await fetch(`/api/user/${userId}/followedStories`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ followedStories: updatedFollowedStories })
                 });
+                if (!updateUserFollowRes.ok) throw new Error("Cập nhật theo dõi người dùng thất bại.");
 
-                if (!response.ok) throw new Error("Cập nhật trên server thất bại.");
-
-                // Cập nhật giao diện
+                // 3. Cập nhật giao diện
                 const followButton = document.querySelector(".follow");
                 const followerSpan = document.querySelector(".follow-info span");
-                let followers = parseInt(followerSpan.textContent) || 0;
+                const followersResult = await updateFollowersRes.json();
+                const updatedFollowers = followersResult.followers;
 
                 if (isFollowing) {
                     followButton.innerHTML = '<i class="fa-regular fa-heart"></i> Follow';
-                    followerSpan.textContent = `${followers - 1} followers`;
                 } else {
                     followButton.innerHTML = '<i class="fa-solid fa-xmark"></i> Unfollow';
-                    followerSpan.textContent = `${followers + 1} followers`;
                 }
 
-                console.log("📌 Cập nhật danh sách theo dõi thành công:", updatedFollowedStories);
+                followerSpan.textContent = `${updatedFollowers} followers`;
             } catch (error) {
                 console.error("Lỗi:", error);
                 Swal.fire({ icon: "error", text: error.message, confirmButtonText: "OK" });
@@ -674,7 +680,7 @@
                 const response = await fetch("/api/check-login", {
                     method: "GET",
                     headers: {
-                        "Authorization": localStorage.getItem("sessionId") || ""
+                        "Authorization": sessionStorage.getItem("sessionId") || ""
                     }
                 });
 
@@ -701,7 +707,7 @@
             }
         };
         function redirectToAccount() {
-            const isLoggedIn = localStorage.getItem("loggedInUser"); 
+            const isLoggedIn = sessionStorage.getItem("loggedInUser"); 
 
             if (isLoggedIn) {
                 window.location.href = "account.html";
@@ -728,7 +734,7 @@
         
         // Load profile pictures
         function loadProfilePictures() {
-            let user = JSON.parse(localStorage.getItem('loggedInUser'));
+            let user = JSON.parse(sessionStorage.getItem('loggedInUser'));
             if (user && user.profilePic) {
                 document.querySelectorAll(".profile-pic").forEach(img => {
                     img.src = user.profilePic;

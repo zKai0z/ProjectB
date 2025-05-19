@@ -22,21 +22,10 @@ async function connectDB() {
     }
 }
 
-let storyCache = [];
-
-async function loadStoriesCache() {
-    try {
-        if (!dbStory) throw new Error("Database storyDB chưa kết nối!");
-        storyCache = await dbStory.collection("story").find().toArray();
-        console.log("✅ Đã tải cache truyện!");
-    } catch (error) {
-        console.error("❌ Lỗi cache dữ liệu truyện:", error);
-    }
-}
-
 async function getStories() {
-    return storyCache;
+    return await dbStory.collection("story").find({}).toArray();
 }
+
 
 const Demo = path.join(__dirname, "Project-B");
 const htmlDirectory = path.join(Demo, "html");
@@ -243,12 +232,14 @@ const server = http.createServer(async (req, res) => {
 
     // API Lấy danh sách truyện
     if (pathname === "/api/stories" && req.method === "GET") {
-        const stories = await getStories();
-        res.writeHead(200, { 
-            "Content-Type": "application/json",
-            "Connection": "keep-alive"
-        });        
-        res.end(JSON.stringify(stories));
+        try {
+            const stories = await getStories(); // Lấy trực tiếp từ MongoDB
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(stories));
+        } catch (error) {
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Không thể lấy danh sách truyện" }));
+        }
         return;
     }
 
@@ -287,6 +278,54 @@ const server = http.createServer(async (req, res) => {
         });
         return;
     }
+
+    // APi cập nhật followers
+    if (req.method === 'PUT' && pathname === '/api/stories') {
+        const storyId = parsedUrl.query.id; // dùng parsedUrl.query.id để lấy ID
+        if (!storyId) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Thiếu storyId trong query string.' }));
+            return;
+        }
+    
+        let body = '';
+    
+        req.on('data', chunk => {
+            body += chunk;
+        });
+    
+        req.on('end', async () => {
+            try {
+                const { increment } = JSON.parse(body);
+                const storyCollection = dbStory.collection("story");
+                const result = await storyCollection.updateOne(
+                    { _id: storyId },
+                    { $inc: { followers: increment } }
+                );                  
+    
+                if (result.modifiedCount === 0) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: 'Không tìm thấy truyện để cập nhật.' }));
+                    return;
+                }
+    
+                const updatedStory = await storyCollection.findOne({ _id: storyId });
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ 
+                    message: 'Cập nhật followers thành công.', 
+                    followers: updatedStory.followers || 0 
+                }));
+            } catch (err) {
+                console.error("Lỗi cập nhật followers:", err);
+                if (!res.headersSent) {
+                    res.writeHead(500, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Lỗi khi cập nhật followers.' }));
+                }
+            }
+        });
+        return;    
+    }    
 
     // API thêm bình luận
     if (pathname === "/api/comments" && req.method === "POST") {
@@ -427,7 +466,7 @@ const server = http.createServer(async (req, res) => {
             }
 
             const stories = await dbStory.collection("story").find({
-                _id: { $in: user.uploadstories.map(id => new ObjectId(id)) }
+                _id: { $in: user.uploadstories.map(storyId) }
             }).toArray();
 
             res.writeHead(200, { "Content-Type": "application/json" });
@@ -499,7 +538,6 @@ const server = http.createServer(async (req, res) => {
 
 // Kết nối MongoDB và khởi chạy server
 connectDB().then(() => {
-    loadStoriesCache();
     server.listen(port, () => {
         console.log(`🚀 Server đang chạy tại http://localhost:${port}`);
     });

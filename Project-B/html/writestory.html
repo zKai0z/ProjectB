@@ -185,6 +185,136 @@
             background-size: cover;
         }
 
+        /*main content*/
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .up-stories {
+            background-color: rgba(178, 211, 255, 0.842);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+        }
+        .up-stories h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .up-stories form {
+            padding: 15px;
+            border: #000000 1px solid;
+            border-radius: 10px;
+            gap: 10px;
+            background-color: rgba(230, 230, 230, 0.8);
+        }
+        .up-stories form input {
+            padding: 10px;
+            width: 70%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .up-stories form select {
+            padding: 10px;
+            width: 50%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .up-stories form label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .up-stories-genre {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 27px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+        }
+
+        .up-stories-genre input[type="checkbox"] {
+            width: 25px;
+            padding: 0;
+            margin: 0;
+        }
+
+        .up-stories-genre label {
+            font-size: 18px;
+            width: 150px;
+        }
+
+        .up-stories button {
+            display: flex;
+            justify-self: center;
+            justify-content: center;
+            background-color: #8caf4c;
+            color: white;
+            width: 50%;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /*up image*/
+        .upload-image-wrapper {
+            width: 200px;
+            height: 100%;
+            border: 2px dashed #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .upload-image-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .upload-image-wrapper img {
+            max-width:100%;
+            max-height: 100%;
+            opacity: 0.5;
+        }
+
+        .upload-preview {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+        
+        /*chia 2 form*/
+        #left-form, #right-form {
+            width: 50%;
+        }
+        #right-form {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        #right-form label {
+            width: 100%;
+            text-align: left;
+        }
+        #right-form .upload-image-wrapper {
+            margin: auto;
+        }
+
         /*foot-content*/
         footer {
             text-align: center;
@@ -275,9 +405,11 @@
             .find{width: 200px;}
             .find input{font-size: 16px;}
 
-        }
-        /*main content*/
+            .up-stories {
+                width: 860px;
+            }
 
+        }
     </style>
 </head>
     <body>
@@ -333,18 +465,51 @@
         </ul>
     </nav>
     <main style="padding: 20px; font-family: sans-serif;">
-        <h2>Thêm Truyện Mới</h2>
-        <form id="addStoryForm" style="margin-bottom: 40px;">
-          <input type="text" id="storyId" placeholder="ID truyện (_id)" required /><br><br>
-          <input type="text" id="title" placeholder="Tên truyện" required /><br><br>
-          <input type="text" id="author" placeholder="Tác giả" required /><br><br>
-          <input type="text" id="status" placeholder="Tình trạng (vd: Đang cập nhật)" /><br><br>
-          <input type="text" id="genre" placeholder="Thể loại (phân cách bằng dấu phẩy)" required /><br><br>
-          <button type="submit">Thêm Truyện</button>
-        </form>
-      
-        <h2>Danh Sách Truyện Của Tôi</h2>
-        <ul id="storyList" style="list-style: none; padding: 0;"></ul>
+        <div class="container">
+            <section class="up-stories">
+                <h2>Thêm Truyện Mới</h2>
+                <form id="addStoryForm">
+                    <div id="form-wrapper" style="display: flex; gap: 10px;">
+                        <div id="left-form">
+                            <label for="storyId">ID truyện:</label>
+                            <input type="text" id="storyId" placeholder="ID truyện (_id) ..." required /><br><br>
+            
+                            <label for="title">Tên truyện:</label>
+                            <input type="text" id="title" placeholder="Tên truyện ... " required /><br><br>
+            
+                            <label for="author">Tác giả:</label>
+                            <input type="text" id="author" placeholder="Tác giả ... " required /><br><br>
+                        </div>
+            
+                        <div id="right-form">
+                            <label for="image">Hình ảnh:</label>
+                            <div class="upload-image-wrapper" id="uploadBox">
+                                <img src="/path/to/plus-icon.png" id="previewIcon" alt="+" />
+                                <input type="file" id="image" accept="image/*">
+                            </div><br><br>
+                        </div>
+                    </div>
+            
+                    <label for="status">Tình trạng:</label>
+                    <select id="status" required>
+                        <option value="">-- Chọn tình trạng --</option>
+                        <option value="Đang Cập Nhật">Đang Cập Nhật</option>
+                        <option value="Đang Tạm Ngưng">Đang Tạm Ngưng</option>
+                        <option value="Đã Hoàn Thành">Đã Hoàn Thành</option>
+                    </select><br><br>
+            
+                    <label>Thể loại:</label>
+                    <div class="up-stories-genre" id="genre"></div><br><br>
+            
+                    <button type="submit">Thêm Truyện</button>
+                </form>
+            </section>            
+        
+            <section class="story-list">
+                <h2>Danh Sách Truyện Của Tôi</h2>
+                <ul id="storyList" style="list-style: none; padding: 0;"></ul>
+            </section>
+        </div>              
     </main>      
     <footer>
         <div class="tothetop">
@@ -356,6 +521,41 @@
     <script src="https://kit.fontawesome.com/508b433abc.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script>
+
+        //preview image
+        const imageInput = document.getElementById("image");
+        const uploadBox = document.getElementById("uploadBox");
+        const previewIcon = document.getElementById("previewIcon");
+
+        uploadBox.addEventListener("click", () => imageInput.click());
+
+        imageInput.addEventListener("change", () => {
+            const file = imageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewIcon.src = e.target.result;
+                    previewIcon.classList.add("upload-preview");
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+         // Danh sách thể loại
+        const genres = [
+            "Hành Động", "Lãng Mạn", "Hài Hước", "Giả Tưởng", "Võ Thuật", "Phiêu Lưu",
+            "Hậu Cung", "Manga", "Manhua", "Manhwa", "Kinh dị", "Huyền Huyễn", "Trinh Thám",
+            "Lịch Sử", "Khoa học", "Viễn Tưởng", "Siêu nhiên", "Tu Tiên", "Hentai", "Doujinshi",
+            "Webtoon", "Đời Thường", "Fantasy"
+        ];
+
+        // Đổ checkbox thể loại vào div#genre
+        const genreContainer = document.getElementById("genre");
+        genres.forEach(g => {
+            const label = document.createElement("label");
+            label.innerHTML = `<input type="checkbox" name="genre" value="${g}"> ${g}`;
+            genreContainer.appendChild(label);
+        });
 
         $(window).scroll(function() {
             if ($(document).scrollTop() > 100) {
@@ -457,65 +657,77 @@
 
         // Add story
         const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
-            if (!storedData || !storedData.user || !storedData.user.userId) {
-                followedListContainer.innerHTML = "<p>Vui lòng đăng nhập để xem danh sách truyện theo dõi.</p>";
-            }
+        const followedListContainer = document.getElementById("storyList"); // thêm phòng trường hợp chưa định nghĩa
+
+        if (!storedData || !storedData.user || !storedData.user.userId) {
+            followedListContainer.innerHTML = "<p>Vui lòng đăng nhập để xem danh sách truyện theo dõi.</p>";
+            throw new Error("Chưa đăng nhập");
+        }
 
         const userId = storedData.user.userId;
         console.log("User ID:", userId);
 
         async function fetchUserStories(userId) {
             try {
-            const res = await fetch(`/user-stories/${userId}`);
-            const stories = await res.json();
+                const res = await fetch(`/user-stories/${userId}`);
+                const stories = await res.json();
 
-            const list = document.getElementById("storyList");
-            list.innerHTML = "";
+                const list = document.getElementById("storyList");
+                list.innerHTML = "";
 
-            stories.forEach(story => {
-                const item = document.createElement("li");
-                item.textContent = `${story.title} (${story._id})`;
-                item.style.cursor = "pointer";
-                item.style.marginBottom = "10px";
-                item.onclick = () => {
-                window.location.href = `/story/${story._id}`;
-                };
-                list.appendChild(item);
-            });
+                stories.forEach(story => {
+                    const item = document.createElement("li");
+                    item.textContent = `${story.title} (${story._id})`;
+                    item.style.cursor = "pointer";
+                    item.style.marginBottom = "10px";
+                    item.onclick = () => {
+                        window.location.href = `/story/${story._id}`;
+                    };
+                    list.appendChild(item);
+                });
             } catch (err) {
-            console.error("Lỗi khi fetch stories:", err);
+                console.error("Lỗi khi fetch stories:", err);
             }
         }
 
         document.getElementById("addStoryForm").addEventListener("submit", async (e) => {
             e.preventDefault();
 
+            // Lấy các thể loại được chọn từ checkbox
+            const genreCheckboxes = document.querySelectorAll('input[name="genre"]:checked');
+            const selectedGenres = Array.from(genreCheckboxes).map(cb => cb.value);
+
             const data = {
-            _id: document.getElementById("storyId").value.trim(),
-            title: document.getElementById("title").value.trim(),
-            author: document.getElementById("author").value.trim(),
-            status: document.getElementById("status").value.trim() || "Đang cập nhật",
-            genre: document.getElementById("genre").value.split(",").map(g => g.trim()).filter(Boolean),
-            userId: userId,
+                _id: document.getElementById("storyId").value.trim(),
+                title: document.getElementById("title").value.trim(),
+                author: document.getElementById("author").value.trim(),
+                status: document.getElementById("status").value || "Đang Cập Nhật",
+                genre: selectedGenres,
+                userId: userId
             };
 
-            const res = await fetch("/add-story", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-            });
+            try {
+                const res = await fetch("/add-story", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
 
-            const result = await res.json();
-            alert(result.message);
+                const result = await res.json();
+                alert(result.message);
 
-            if (result.success) {
-            fetchUserStories(userId);
+                if (result.success) {
+                    fetchUserStories(userId);
+                }
+            } catch (err) {
+                console.error("Lỗi khi thêm truyện:", err);
+                alert("Lỗi khi thêm truyện. Vui lòng thử lại.");
             }
         });
 
         window.onload = () => {
             if (userId) {
-            fetchUserStories(userId);
+                fetchUserStories(userId);
             }
         };
 
