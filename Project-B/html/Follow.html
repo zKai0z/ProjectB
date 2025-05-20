@@ -201,7 +201,8 @@
             gap: 10px;
             padding: 10px;
             height: 100%;
-            background-color: #ffffff;
+            background-color: #98ffcfcb;
+            border-radius: 10px;
         }
         .follow-content {
             width: 100%;
@@ -213,6 +214,10 @@
         .follow-content h1 {
             text-align: center;
             font-size: 24px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            border: #000000 1px solid;
+            padding: 10px;
         }
         .follow-content img {
             max-width: 100px;
@@ -225,9 +230,11 @@
             justify-content: center;
             gap: 12px;
             max-width: 100%;
-            height: 700px;
-            background-color: #e2e1e1d7;
+            max-height: 5472px;
+            background-color: #ffffffd7;
             padding: 10px;
+            border-radius: 10px;
+            border: #000000 1px solid;
         }
         .story-card {
             flex: 0 1 124px;
@@ -470,7 +477,7 @@
                 if (!storedData || !storedData.user || !storedData.user.userId) {
                     followedListContainer.innerHTML = "<p>Vui lòng đăng nhập để xem danh sách truyện theo dõi.</p>";
                     return;
-                }
+                }   
 
                 const userId = storedData.user.userId;
 

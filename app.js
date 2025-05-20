@@ -407,7 +407,7 @@ const server = http.createServer(async (req, res) => {
                     followers: 0,
                     author,
                     status: status || "Đang cập nhật",
-                    genre: genre.split(",").map(g => g.trim()) // Chuyển genre thành mảng nếu cần
+                    genre: genre || "Chưa phân loại",
                 };
 
                 await dbStory.collection("story").insertOne(newStory);
@@ -450,25 +450,24 @@ const server = http.createServer(async (req, res) => {
     // API lấy danh sách truyện đã tải lên của user
     if (req.method === "GET" && pathname.startsWith("/user-stories/")) {
         const userId = pathname.split("/").pop();
-
+    
         try {
-            // Kiểm tra userId hợp lệ
             if (!ObjectId.isValid(userId)) {
                 res.writeHead(400, { "Content-Type": "application/json" });
                 return res.end(JSON.stringify({ message: "User ID không hợp lệ", success: false }));
             }
-
+    
             const user = await dbUser.collection("users").findOne({ _id: new ObjectId(userId) });
-
+    
             if (!user || !user.uploadstories || user.uploadstories.length === 0) {
                 res.writeHead(200, { "Content-Type": "application/json" });
                 return res.end(JSON.stringify([]));
             }
-
+    
             const stories = await dbStory.collection("story").find({
-                _id: { $in: user.uploadstories.map(storyId) }
+                _id: { $in: user.uploadstories }
             }).toArray();
-
+    
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify(stories));
         } catch (err) {
@@ -477,7 +476,7 @@ const server = http.createServer(async (req, res) => {
             res.end(JSON.stringify({ message: "Lỗi server", success: false }));
         }
         return;
-    }  
+    }    
     
     // update history
     if (req.method === "PUT" && pathname.startsWith("/api/user/") && pathname.endsWith("/history")) {

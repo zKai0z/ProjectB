@@ -179,10 +179,9 @@
         main {
             display: flex;
             flex-direction: row;
-            gap: 10px;
-            padding: 10px;
             background-image: url(https://img.freepik.com/free-vector/gradient-abstract-wireframe-background_23-2149009903.jpg?semt=ais_hybrid&w=740);
             background-size: cover;
+            height: auto;
         }
 
         /*main content*/
@@ -191,17 +190,22 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
+            height: 100%;
         }
         .up-stories {
-            background-color: rgba(178, 211, 255, 0.842);
+            background-color: rgba(157, 255, 234, 0.76);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 10px 10px 0 0;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 100%;
         }
         .up-stories h2 {
             margin-bottom: 20px;
+            padding: 10px;
             text-align: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: #000000 1px solid;
+            border-radius: 10px;
         }
         .up-stories form {
             padding: 15px;
@@ -315,6 +319,86 @@
             margin: auto;
         }
 
+        /*story list*/
+        .story-list {
+            display: flex;
+            width: 100%;
+            height: auto;
+            justify-content: center;
+        }
+        .story-upload-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            gap: 10px;
+            padding: 20px;
+            height: 100%;
+            border-radius: 0 0 10px 10px;
+            background-color: rgba(157, 255, 234, 0.76);
+        }
+        .story-upload-content {
+            width: 100%;
+            height: auto;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 11px;
+        }
+        .story-upload-content h1 {
+            text-align: center;
+            font-size: 24px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            border: #000000 1px solid;
+            padding: 10px;
+        }
+        .story-upload-content img {
+            max-width: 100px;
+            height: auto;
+        }
+        .story-upload-list {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            max-width: 100%;
+            max-height: 5472px;
+            background-color: #ffffffd7;
+            padding: 10px;
+            border-radius: 10px;
+            border: #000000 1px solid;
+        }
+        .story-card {
+            flex: 0 1 124px;
+            height: 300px;
+            border: 0px solid transparent;
+            border-radius: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        .story-card:hover {
+            box-shadow: 0 2px 18px #72efff;
+            cursor: pointer;
+            transform: scale(1.02) translateY(-2px);
+        }
+
+        .story-card img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 15px 15px 0 0 ;
+        }
+
+        .story-card a {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: black;
+        }
+
         /*foot-content*/
         footer {
             text-align: center;
@@ -406,9 +490,26 @@
             .find input{font-size: 16px;}
 
             .up-stories {
-                width: 860px;
+                width: 60%;
             }
 
+            .up-stories h2 {
+                font-size: 24px;
+            }
+
+            .story-upload-container {
+                width: 60%;
+            }
+            .story-card{
+                flex: 0 1 210px;
+                height: 450px;
+            }
+            .story-card a {
+                font-size: 16px;
+            }
+            .story-card p {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -506,9 +607,13 @@
             </section>            
         
             <section class="story-list">
-                <h2>Danh Sách Truyện Của Tôi</h2>
-                <ul id="storyList" style="list-style: none; padding: 0;"></ul>
-            </section>
+                <div class="story-upload-container">
+                    <div class="story-upload-content">
+                        <h1>Truyện đã tải lên</h1>
+                        <div class="story-upload-list"></div>
+                    </div>
+                </div>
+            </section>            
         </div>              
     </main>      
     <footer>
@@ -567,6 +672,65 @@
         function scrollToTop() {
             $("html, body").animate({scrollTop: 0}, 700);
         }
+
+        //load upload story
+        document.addEventListener("DOMContentLoaded", async () => {
+            const uploadListContainer = document.querySelector(".story-upload-list");
+            uploadListContainer.innerHTML = "<p>Đang tải...</p>";
+
+            try {
+                // Get logged-in user data
+                const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
+                if (!storedData || !storedData.user || !storedData.user.userId) {
+                    uploadListContainer.innerHTML = "<p>Vui lòng đăng nhập để xem truyện đã tải lên.</p>";
+                    return;
+                }
+
+                const userId = storedData.user.userId;
+
+                // Fetch uploaded stories from custom API
+                const response = await fetch(`http://localhost:3000/user-stories/${userId}`);
+                if (!response.ok) throw new Error("Không thể lấy danh sách truyện đã tải lên");
+
+                const uploadedStories = await response.json();
+
+                if (uploadedStories.length === 0) {
+                    uploadListContainer.innerHTML = "<p>Chưa có truyện nào được tải lên.</p>";
+                    return;
+                }
+
+                uploadListContainer.innerHTML = "";
+
+                uploadedStories.forEach(story => {
+                    const storyCard = document.createElement("div");
+                    storyCard.classList.add("story-card");
+
+                    storyCard.dataset.theloai = JSON.stringify(story.genre);
+                    storyCard.dataset.status = story.status;
+                    storyCard.dataset.views = story.views;
+                    storyCard.dataset.chapters = Object.keys(story.chapters || {}).length;
+
+                    storyCard.innerHTML = `
+                        <a href="#" onclick='redirectToStoryPage(${JSON.stringify(story)})'>
+                            <img src="${story.image}" alt="${story.title}">
+                        </a>
+                        <div class="story-info">
+                            <h3><a href="#" onclick='redirectToStoryPage(${JSON.stringify(story)})'>${story.title}</a></h3>
+                            <p><strong>Chapters:</strong> ${Object.keys(story.chapters || {}).length}</p>
+                            <p><strong>Lượt Xem:</strong> ${story.views}</p>
+                            <p><strong>Theo Dõi:</strong> ${story.followers}</p>
+                        </div>
+                    `;
+
+                    uploadListContainer.appendChild(storyCard);
+                });
+
+            } catch (error) {
+                console.error("❌ Lỗi khi tải truyện đã upload:", error);
+                uploadListContainer.innerHTML = "<p>Không thể tải dữ liệu.</p>";
+            }
+        });
+
         //search story
         document.addEventListener("DOMContentLoaded", () => {
             const searchInput = document.getElementById("search-input");
