@@ -249,7 +249,7 @@
 
         .up-stories form select {
             padding: 10px;
-            width: 50%;
+            width: 40%;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -290,7 +290,7 @@
             justify-content: center;
             background-color: #8caf4c;
             color: white;
-            width: 50%;
+            width: 40%;
             padding: 10px 15px;
             border: none;
             border-radius: 5px;
@@ -520,6 +520,14 @@
 
             .up-stories h2 {
                 font-size: 24px;
+            }
+
+            .up-stories form input {
+                width: 368px;
+            }
+
+            .up-stories form select {
+                width: 390px;
             }
 
             .story-upload-container {
@@ -768,11 +776,11 @@
                     storyCard.dataset.chapters = Object.keys(story.chapters || {}).length;
 
                     storyCard.innerHTML = `
-                        <a href="#" onclick='redirectToStoryPage(${JSON.stringify(story)})'>
+                        <a href="#" onclick='redirectToStoryEditPage(${JSON.stringify(story)})'>
                             <img src="${story.image}" alt="${story.title}">
                         </a>
                         <div class="story-info">
-                            <h3><a href="#" onclick='redirectToStoryPage(${JSON.stringify(story)})'>${story.title}</a></h3>
+                            <h3><a href="#" onclick='redirectToStoryEditPage(${JSON.stringify(story)})'>${story.title}</a></h3>
                             <p><strong>Chapters:</strong> ${Object.keys(story.chapters || {}).length}</p>
                             <p><strong>Lượt Xem:</strong> ${story.views}</p>
                             <p><strong>Theo Dõi:</strong> ${story.followers}</p>
@@ -859,9 +867,9 @@
             }
         };
 
-        function redirectToStoryPage(story) {
-            console.log("📌 Chuyển hướng với title:", story.title);
-            window.location.href = `Novel.html?story=${encodeURIComponent(story.title)}`;
+        function redirectToStoryEditPage(story) {
+            console.log("📌 Chuyển hướng với id:", story._id);
+            window.location.href = `EditNovel.html?story=${encodeURIComponent(story._id)}`;
         }
 
         // Load profile pictures
@@ -887,29 +895,6 @@
 
         const userId = storedData.user.userId;
         console.log("User ID:", userId);
-
-        async function fetchUserStories(userId) {
-            try {
-                const res = await fetch(`/user-stories/${userId}`);
-                const stories = await res.json();
-
-                const list = document.getElementById("storyList");
-                list.innerHTML = "";
-
-                stories.forEach(story => {
-                    const item = document.createElement("li");
-                    item.textContent = `${story.title} (${story._id})`;
-                    item.style.cursor = "pointer";
-                    item.style.marginBottom = "10px";
-                    item.onclick = () => {
-                        window.location.href = `/story/${story._id}`;
-                    };
-                    list.appendChild(item);
-                });
-            } catch (err) {
-                console.error("Lỗi khi fetch stories:", err);
-            }
-        }
 
         document.getElementById("addStoryForm").addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -945,12 +930,6 @@
                 alert("Lỗi khi thêm truyện. Vui lòng thử lại.");
             }
         });
-
-        window.onload = () => {
-            if (userId) {
-                fetchUserStories(userId);
-            }
-        };
 
     </script>
 </body>

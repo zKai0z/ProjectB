@@ -243,6 +243,50 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
+    // API cập nhật thông tin truyện
+    if (pathname === "/api/story/update" && req.method === "PUT") {
+        let body = "";
+        req.on("data", chunk => body += chunk);
+        req.on("end", async () => {
+            try {
+                const { id, author, status, genre, followers } = JSON.parse(body);
+
+                if (!id) {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify({ error: "Thiếu ID truyện" }));
+                }
+
+                const db = client.db("storyDB");
+                const collection = db.collection("story");
+
+                const updateResult = await collection.updateOne(
+                    { _id: id },
+                    {
+                        $set: {
+                            author: author || "",
+                            status: status || "Đang cập nhật",
+                            genre: Array.isArray(genre) ? genre : [genre],
+                            followers: typeof followers === "number" ? followers : 0
+                        }
+                    }
+                );
+
+                if (updateResult.modifiedCount === 1) {
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ message: "Cập nhật thành công" }));
+                } else {
+                    res.writeHead(404, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ error: "Không tìm thấy truyện hoặc không có thay đổi" }));
+                }
+            } catch (err) {
+                console.error("Lỗi update:", err);
+                res.writeHead(500, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: "Lỗi khi cập nhật truyện" }));
+            }
+        });
+        return;
+    }
+
     // API Update followedStories cho user
     if (req.method === "PUT" && pathname.startsWith("/api/user/") && pathname.endsWith("/followedStories")) {
         const parts = pathname.split("/");
