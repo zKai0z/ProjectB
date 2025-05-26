@@ -359,6 +359,7 @@
 
         .comment {
             display: flex;
+            flex-direction: column;
             gap: 10px;
             margin-bottom: 15px;
         }
@@ -372,12 +373,73 @@
             background: #f0f2f5;
             padding: 10px 15px;
             border-radius: 15px;
-            width: 100%;
+            max-width: 100%;
         }
 
         .comment-content .user-name {
             font-weight: bold;
             margin-bottom: 5px;
+        }
+
+        .comment-content .reply-box button {
+            background: transparent;
+            border: none;
+            border-radius: 15px;
+            color: #1877f2;
+            cursor: pointer;
+            font-size: 14px;
+            position: relative;
+            top: -12px;
+            padding: 5px 10px;
+        }
+
+        .comment-content .reply-box button:hover {
+            background-color: rgba(24, 119, 242, 0.1);
+        }
+
+        .comment-content textarea {
+            margin-left: 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        .comment-section .comment-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .comment-actions button {
+            background: transparent;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            color: #1877f2;
+            font-size: 15px;
+        }
+
+        .comment-actions button:hover {
+            background-color: rgba(24, 119, 242, 0.1);
+        }
+
+        .reply {
+            background-color: #f0f2f5;
+            margin-left: 50px;
+            padding: 15px 10px;
+            border: 1px solid #c4c4c4;
+            border-radius: 10px;
+        }
+
+        .reply p {
+            margin: 0;
+            margin-top: 10px;
+        }
+
+        .comment-time, .reply-time {
+            font-size: 0.8em;
+            color: #888;
+            margin-left: 8px;
         }
 
         /*footer*/
@@ -605,6 +667,32 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        // formatTimeAgo function
+        function formatTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const seconds = Math.floor((new Date() - date) / 1000);
+
+            const rtf = new Intl.RelativeTimeFormat("vi", { numeric: "auto" });
+
+            const intervals = [
+                { label: "year", seconds: 31536000 },
+                { label: "month", seconds: 2592000 },
+                { label: "day", seconds: 86400 },
+                { label: "hour", seconds: 3600 },
+                { label: "minute", seconds: 60 },
+                { label: "second", seconds: 1 }
+            ];
+
+            for (const interval of intervals) {
+                const count = Math.floor(seconds / interval.seconds);
+                if (count >= 1) {
+                    return rtf.format(-count, interval.label);
+                }
+            }
+
+            return "vừa xong";
+        }
+
         // Toggle search input expansion
         const searchContainer = document.getElementById('search-container');
         const searchButton = document.getElementById('search-button');
@@ -792,31 +880,56 @@
                     return;
                 }
 
-                // ✅ Hiển thị từng bình luận
-                for (const { userId, comment } of comments) {
-                    let userName = "Người dùng";
-                    let avatar = "default-avatar.png";
+                for (let index = 0; index < comments.length; index++) {
+                    const { comment, likes = [], dislikes = [], replies = [], userId, timestamp } = comments[index];
 
-                    // Fetch thông tin người dùng nếu chỉ có userId
-                    try {
-                        const userRes = await fetch(`/api/user?id=${userId}`);
-                        if (userRes.ok) {
-                            const user = await userRes.json();
-                            userName = user.username || "Người dùng";
-                            avatar = user.profilePic || "default-avatar.png";
+                    // 👉 Lấy thông tin của người comment
+                    const userResponse = await fetch(`/api/user?id=${userId}`);
+                    const user = userResponse.ok ? await userResponse.json() : {};
+                    const displayName = user.username || "Người dùng";
+                    const displayAvatar = user.profilePic || "default-avatar.png";
+
+                    const timeAgo = formatTimeAgo(timestamp);
+
+                    // 👉 Hiển thị các replies
+                    const replyHtml = await Promise.all(replies.map(async (r) => {
+                        let replyUserData = {};
+                        try {
+                            const replyUserRes = await fetch(`/api/user?id=${r.userId}`);
+                            if (replyUserRes.ok) {
+                                replyUserData = await replyUserRes.json();
+                            }
+                        } catch (err) {
+                            console.warn("Không thể lấy user reply", err);
                         }
-                    } catch (err) {
-                        console.warn("Không lấy được thông tin user", err);
-                    }
+                        const replyName = replyUserData.username || "Người dùng";
+                        const replyTime = formatTimeAgo(r.timestamp);
+                        return `
+                            <div class="reply">
+                                <strong>${replyName}</strong><span class="reply-time"> - ${replyTime}</span>
+                                <p>${r.comment}</p>
+                            </div>
+                        `;
+                    }));
 
                     const commentDiv = document.createElement("div");
                     commentDiv.classList.add("comment");
                     commentDiv.innerHTML = `
-                        <img src="${avatar}" alt="${userName}">
                         <div class="comment-content">
-                            <strong>${userName}</strong>
+                            <img src="${displayAvatar}" alt="${displayName}">
+                            <strong>${displayName}</strong> <span class="comment-time">${timeAgo}</span>
                             <p>${comment}</p>
+                            <div class="comment-actions">
+                                <button onclick="likeComment('${storyId}', '${chapterId}', ${index})" id="like-btn-${index}">👍 ${likes.length}</button>
+                                <button onclick="dislikeComment('${storyId}', '${chapterId}', ${index})" id="dislike-btn-${index}">👎 ${dislikes.length}</button>
+                                <button onclick="toggleReplyBox(${index})">Trả lời</button>
+                            </div>
+                            <div id="reply-box-${index}" class="reply-box" style="display:none">
+                                <textarea id="reply-input-${index}" placeholder="Trả lời bình luận..."></textarea>
+                                <button onclick="submitReply('${storyId}', '${chapterId}', ${index})">Gửi</button>
+                            </div>
                         </div>
+                        <div class="replies">${replyHtml.join("")}</div>
                     `;
                     container.appendChild(commentDiv);
                 }
@@ -870,6 +983,95 @@
                 }
             } catch (err) {
                 console.error("Lỗi khi gửi bình luận:", err);
+            }
+        }
+
+        // Like/Dislike Comment
+        async function likeComment(storyId, chapterId, index) {
+            await reactToComment(storyId, chapterId, index, "like");
+        }
+
+        async function dislikeComment(storyId, chapterId, index) {
+            await reactToComment(storyId, chapterId, index, "dislike");
+        }
+
+        async function reactToComment(storyId, chapterId, index, action) {
+            const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
+            if (!storedData || !storedData.user) {
+                return Swal.fire({ icon: "error", text: "Bạn cần đăng nhập để tương tác." });
+            }
+
+            const res = await fetch("/api/comments/react", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    storyId,
+                    chapterId,
+                    commentIndex: index,
+                    userId: storedData.user.userId,
+                    action
+                })
+            });
+
+            if (res.ok) {
+                const updated = await res.json();
+                const likeBtn = document.getElementById(`like-btn-${index}`);
+                const dislikeBtn = document.getElementById(`dislike-btn-${index}`);
+                
+                if (likeBtn && dislikeBtn && typeof updated.likes === "number" && typeof updated.dislikes === "number") {
+                    likeBtn.innerHTML = `👍 ${updated.likes}`;
+                    dislikeBtn.innerHTML = `👎 ${updated.dislikes}`;
+                }
+            } else {
+                console.error("Không thể gửi phản hồi.");
+            }
+        }
+
+        // Toggle reply box
+        function toggleReplyBox(index) {
+            const box = document.getElementById(`reply-box-${index}`);
+            box.style.display = box.style.display === "none" ? "block" : "none";
+        }
+
+        async function submitReply(storyId, chapterId, commentIndex) {
+            const replyText = document.getElementById(`reply-input-${commentIndex}`).value.trim();
+            if (!replyText) return;
+
+            const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
+            if (!storedData || !storedData.user) {
+                return Swal.fire({ icon: "error", text: "Bạn cần đăng nhập để trả lời." });
+            }
+
+            const userId = storedData.user.userId;
+            const userResponse = await fetch(`/api/user?id=${userId}`);
+            if (!userResponse.ok) {
+                return Swal.fire({ icon: "error", text: "Không thể lấy thông tin người dùng." });
+            }
+
+            const user = await userResponse.json();
+
+            const reply = {
+                userId,
+                userName: user.username || "Người dùng",
+                avatar: user.profilePic || "default-avatar.png",
+                comment: replyText
+            };
+
+            const res = await fetch("/api/comments/reply", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    storyId,
+                    chapterId,
+                    commentIndex,
+                    reply
+                })
+            });
+
+            if (res.ok) {
+                loadComments(storyId, chapterId);
+            } else {
+                console.error("Không thể gửi trả lời.");
             }
         }
 

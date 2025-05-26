@@ -377,7 +377,7 @@ const server = http.createServer(async (req, res) => {
         req.on("data", chunk => body += chunk);
         req.on("end", async () => {
             try {
-                const { storyId, chapterId, userId, userName, avatar, comment } = JSON.parse(body);
+                const { storyId, chapterId, userId, comment } = JSON.parse(body);
     
                 if (!storyId || !chapterId || !userId || !comment) {
                     res.writeHead(400, { "Content-Type": "application/json" });
@@ -386,8 +386,6 @@ const server = http.createServer(async (req, res) => {
     
                 const newComment = {
                     userId,
-                    userName,
-                    avatar,
                     comment,
                     timestamp: new Date()
                 };
@@ -427,8 +425,101 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(500, { "Content-Type": "application/json" });
             return res.end(JSON.stringify({ message: "Lỗi server", error: error.message }));
         }
-    }    
+    }
     
+    // ✅ API like / dislike comment
+    if (pathname === "/api/comments/react" && req.method === "POST") {
+        let body = "";
+        req.on("data", chunk => body += chunk);
+        req.on("end", async () => {
+            try {
+                const { storyId, chapterId, commentIndex, userId, action } = JSON.parse(body);
+
+                if (!storyId || !chapterId || commentIndex == null || !userId || !["like", "dislike"].includes(action)) {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify({ message: "Dữ liệu không hợp lệ." }));
+                }
+
+                const likeField = `chapters.${chapterId}.${commentIndex}.likes`;
+                const dislikeField = `chapters.${chapterId}.${commentIndex}.dislikes`;
+
+                const update = action === "like"
+                    ? {
+                        $addToSet: { [likeField]: userId },
+                        $pull: { [dislikeField]: userId }
+                    }
+                    : {
+                        $addToSet: { [dislikeField]: userId },
+                        $pull: { [likeField]: userId }
+                    };
+
+                await dbComments.collection("StoryComs").updateOne({ storyId }, update);
+
+                // ✅ Sau khi cập nhật, lấy lại comment cụ thể
+                const updatedDoc = await dbComments.collection("StoryComs").findOne({ storyId });
+
+                const comment = updatedDoc?.chapters?.[chapterId]?.[commentIndex];
+                if (!comment) {
+                    res.writeHead(404, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify({ message: "Không tìm thấy bình luận." }));
+                }
+
+                res.writeHead(200, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({
+                    message: "Đã cập nhật phản hồi",
+                    likes: comment.likes?.length || 0,
+                    dislikes: comment.dislikes?.length || 0
+                }));
+            } catch (error) {
+                console.error("Lỗi khi xử lý like/dislike:", error);
+                if (!res.headersSent) {
+                    res.writeHead(500, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify({ message: "Lỗi server", error: error.message }));
+                }
+            }
+        });
+        return;
+    }
+    
+    // API reply comment
+    if (pathname === "/api/comments/reply" && req.method === "POST") {
+        let body = "";
+        req.on("data", chunk => body += chunk);
+        req.on("end", async () => {
+            try {
+                const { storyId, chapterId, commentIndex, reply } = JSON.parse(body);
+
+                if (!storyId || !chapterId || commentIndex == null || !reply?.userId || !reply.comment) {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify({ message: "Thiếu thông tin." }));
+                }
+
+                const replyWithTimestamp = {
+                    ...reply,
+                    timestamp: new Date()
+                };
+                
+                reply.likes = [];
+                reply.dislikes = [];
+
+                const field = `chapters.${chapterId}.${commentIndex}.replies`;
+
+                const result = await dbComments.collection("StoryComs").updateOne(
+                    { storyId },
+                    { $push: { [field]: reply } }
+                );
+
+                res.writeHead(200, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ message: "Đã thêm trả lời", result }));
+            } catch (error) {
+                console.error("Lỗi khi thêm trả lời:", error);
+                res.writeHead(500, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ message: "Lỗi server", error: error.message }));
+            }
+        });
+        return;
+    }
+
     // API add-stories
     if (req.method === "POST" && pathname === "/add-story") {
         let body = "";
