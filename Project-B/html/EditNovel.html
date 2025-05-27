@@ -345,13 +345,44 @@
             color: #333;
             font-size: 20px;
         }
+        .chapter-upload {
+            max-width: 100%;
+            width: 90%;
+            height: 400px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            background-color: #f9f9f9;
+            justify-content: center;
+            align-items: center;
+        }
+        .chapter-upload #pdf-upload {
+            width: auto;
+            height: 100%;
+            padding: 10px;
+            border: 3px dotted #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .chapter-upload button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #00d9ff;
+            color: rgb(0, 0, 0);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
         /*footer*/
         footer {
             text-align: center;
             padding: 10px;
             background-color: #1b1b1be8;
             border-top: 1px solid #ddd;
-            color: white;
+            color: rgb(4, 0, 255);
             font-size: 14px;
         }
         .tothetop button {
@@ -557,7 +588,7 @@
                 setTimeout(() => {
                     searchButton.classList.remove('hidden');
                     searchButton.classList.remove('reappear');
-                }, 500);
+                }, 200);
 
                 isExpanded = false;
             }
@@ -719,7 +750,7 @@
 
                 // Upload PDF
                 document.querySelector(".chapter-upload").innerHTML = `
-                    <h3>Thêm chương từ PDF</h3>
+                    <h3>Thêm chapter</h3>
                     <input type="file" id="pdf-upload" accept="application/pdf" />
                     <button id="upload-pdf">Upload PDF</button>
                 `;
