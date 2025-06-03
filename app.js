@@ -78,6 +78,7 @@ const server = http.createServer(async (req, res) => {
                     password,
                     birthday: birthday || "", // Nếu không có, gán rỗng hoặc một giá trị mặc định
                     gender: gender || "Other", // Mặc định là "Other"
+                    lastChecked: new Date().toISOString(), // Thêm trường lastChecked
                     followedStories: [],
                     history: []
                 };
@@ -229,6 +230,113 @@ const server = http.createServer(async (req, res) => {
         });
         return;
     }
+
+    // API GET notification
+    if (pathname === "/api/notifications" && req.method === "GET") {
+        const userId = parsedUrl.query.userId;
+    
+        if (!userId) {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ message: "Thiếu userId" }));
+        }
+    
+        try {
+            const user = await dbUser.collection("users").findOne({ _id: new ObjectId(userId) });
+    
+            if (!user) {
+                res.writeHead(404, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ message: "Không tìm thấy người dùng" }));
+            }
+    
+            const lastChecked = user.lastChecked ? new Date(user.lastChecked) : new Date(0);
+            const storyIds = user.followedStories || [];
+    
+            const newChapters = await dbStory.collection("story").find({
+                _id: { $in: storyIds },
+                updatedAt: { $gt: lastChecked }
+            }).toArray();
+    
+            const newReplies = await dbComments.collection("StoryComs").find({
+                storyId: { $in: storyIds.map(id => id.toString()) }
+            }).toArray();
+    
+            const allStories = await dbStory.collection("story").find({
+                _id: { $in: storyIds }
+            }).toArray();
+            const storyTitleMap = Object.fromEntries(allStories.map(s => [s._id.toString(), s.title]));
+
+            const replyNotifs = [];
+
+            newReplies.forEach(storyDoc => {
+                const chapters = storyDoc.chapters || {};
+                const title = storyTitleMap[storyDoc.storyId] || "Truyện không rõ";
+
+                for (const [chapterId, comments] of Object.entries(chapters)) {
+                    comments?.forEach(comment => {
+                        comment.replies?.forEach(reply => {
+                            if (
+                                reply.userId !== userId &&
+                                new Date(reply.timestamp) > lastChecked
+                            ) {
+                                replyNotifs.push({
+                                    type: "reply",
+                                    message: `Bạn có phản hồi mới ở ${chapterId} của "${title}".`,
+                                    timestamp: reply.timestamp,
+                                    storyTitle: title,
+                                    chapterId: chapterId,
+                                    storyId: storyDoc.storyId
+                                });                                
+                            }
+                        });
+                    });
+                }
+            });
+
+            const chapterNotifs = newChapters.map(story => ({
+                type: "update",
+                message: `Truyện "${story.title}" vừa cập nhật chương mới.`,
+                timestamp: story.updatedAt,
+                storyTitle: story.title
+            }));
+    
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({
+                lastChecked,
+                notifications: [...replyNotifs, ...chapterNotifs]
+            }));
+        } catch (e) {
+            console.error("Lỗi API /api/notifications:", e);
+            res.writeHead(500, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ message: "Lỗi server", error: e.message }));
+        }
+    }    
+    
+    // API POST notification
+    if (pathname === "/api/notifications/markAsRead" && req.method === "POST") {
+        let body = "";
+        req.on("data", chunk => body += chunk);
+        req.on("end", async () => {
+            try {
+                const { userId } = JSON.parse(body);
+                if (!userId) {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify({ message: "Thiếu userId" }));
+                }
+    
+                await dbUser.collection("users").updateOne(
+                    { _id: new ObjectId(userId) },
+                    { $set: { lastChecked: new Date() } }
+                );
+    
+                res.writeHead(200, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ message: "Đã cập nhật lastChecked" }));
+            } catch (e) {
+                res.writeHead(500, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ message: "Lỗi server", error: e.message }));
+            }
+        });
+        return;
+    }     
 
     // API Lấy danh sách truyện
     if (pathname === "/api/stories" && req.method === "GET") {
@@ -387,7 +495,7 @@ const server = http.createServer(async (req, res) => {
                 const newComment = {
                     userId,
                     comment,
-                    timestamp: new Date()
+                    timestamp: new Date().toISOString(), // Thêm timestamp
                 };
     
                 const result = await dbComments.collection("StoryComs").updateOne(
@@ -496,18 +604,18 @@ const server = http.createServer(async (req, res) => {
 
                 const replyWithTimestamp = {
                     ...reply,
-                    timestamp: new Date()
+                    timestamp: new Date().toISOString(),
+                    likes: [],
+                    dislikes: []
                 };
                 
-                reply.likes = [];
-                reply.dislikes = [];
-
                 const field = `chapters.${chapterId}.${commentIndex}.replies`;
-
+                
                 const result = await dbComments.collection("StoryComs").updateOne(
                     { storyId },
-                    { $push: { [field]: reply } }
+                    { $push: { [field]: replyWithTimestamp } }
                 );
+                
 
                 res.writeHead(200, { "Content-Type": "application/json" });
                 return res.end(JSON.stringify({ message: "Đã thêm trả lời", result }));

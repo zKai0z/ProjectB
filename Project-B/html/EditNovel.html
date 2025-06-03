@@ -57,6 +57,51 @@
             margin: 10px 0;
         }
 
+        #notificationWrapper {
+            position: absolute;
+            right: 120px;
+        }
+
+        #notificationBell {
+            position: relative;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        #notificationDot {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 10px;
+            height: 10px;
+            background: red;
+            border-radius: 50%;
+        }
+
+        .notification-popup {
+            position: absolute;
+            top: 30px;
+            right: 0;
+            width: 250px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 999;
+        }
+
+        .notification-popup ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .notification-popup li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
         nav {
             background-color: rgb(46, 46, 46);
             color: white;
@@ -486,6 +531,15 @@
     <header>
         <a class="logo" href="home.html"><img src="https://i.postimg.cc/B66gbNSH/HUB-1.png" width="50px" height="50px" alt=""></a>
         <a href="home.html" class="home-logo"><img src="https://i.postimg.cc/bvLgq4hq/logo-web-novel-Canvases-Landscape-i1.png" alt=""></a>
+        <div id="notificationWrapper">
+            <div id="notificationBell" onclick="toggleNotificationPopup()">
+                🔔
+                <span id="notificationDot" style="display: none;"></span>
+            </div>
+            <div id="notificationPopup" class="notification-popup" style="display: none;">
+                <ul id="notificationList"></ul>
+            </div>
+        </div>        
         <div class="right-logo" onclick="redirectToAccount()">
             <img class="profile-pic" src="default-profile.png" alt="Profile Picture">
         </div>   
@@ -560,6 +614,102 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Kiểm tra người dùng đã đăng nhập
+        function getLoggedInUser() {
+            const localUser = localStorage.getItem("loggedInUser");
+            const sessionUser = sessionStorage.getItem("loggedInUser");
+
+            try {
+                if (localUser) return JSON.parse(localUser);
+                if (sessionUser) return JSON.parse(sessionUser);
+            } catch (e) {
+                console.error("Error parsing user session:", e);
+            }
+
+            return null;
+        }
+
+        async function loadNotifications(userId) {
+            try {
+                const response = await fetch(`/api/notifications?userId=${userId}`);
+                if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
+                
+                const data = await response.json();
+                const { lastChecked, notifications } = data;
+
+                const hasNew = notifications.some(notif => new Date(notif.timestamp) > new Date(lastChecked));
+                document.getElementById("notificationDot").style.display = hasNew ? "block" : "none";
+
+                const list = document.getElementById("notificationList");
+                console.log("Notifications:", notifications);
+                list.innerHTML = notifications.length === 0
+                    ? "<li>Không có thông báo mới.</li>"
+                    : "";
+
+                notifications.forEach(notif => {
+                    const li = document.createElement("li");
+                    li.textContent = notif.message;
+                    li.style.cursor = "pointer";
+
+                    // Xử lý click
+                    li.onclick = () => {
+                        if (notif.type === "reply") {
+                            // Truy cập chapter cụ thể
+                            window.location.href = `readWeb.html?story=${encodeURIComponent(notif.storyId)}&chapter=${encodeURIComponent(notif.chapterId)}`;
+                        } else if (notif.type === "update") {
+                            // Truy cập truyện
+                            redirectToStoryPage({ title: notif.storyTitle });
+                        }
+                    };
+
+                    list.appendChild(li);
+                });
+            } catch (err) {
+                console.error("Lỗi khi tải thông báo:", err);
+                document.getElementById("notificationList").innerHTML = "<li>Lỗi khi tải thông báo.</li>";
+            }
+        }
+
+        function toggleNotificationPopup() {
+            const popup = document.getElementById("notificationPopup");
+            popup.style.display = popup.style.display === "block" ? "none" : "block";
+
+            if (popup.style.display === "block") {
+                // Ẩn chấm đỏ
+                document.getElementById("notificationDot").style.display = "none";
+
+                // Cập nhật lastChecked
+                const user = getLoggedInUser(); // bạn đã có hàm này
+                if (user) {
+                    fetch(`/api/notifications/markAsRead`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userId: user.user.userId })
+                    });
+                }
+            }
+        }
+
+        function toggleNotificationPopup() {
+            const popup = document.getElementById("notificationPopup");
+            popup.style.display = popup.style.display === "block" ? "none" : "block";
+
+            if (popup.style.display === "block") {
+                // Ẩn chấm đỏ
+                document.getElementById("notificationDot").style.display = "none";
+
+                // Cập nhật lastChecked
+                const user = getLoggedInUser(); // bạn đã có hàm này
+                if (user) {
+                    fetch(`/api/notifications/markAsRead`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userId: user.user.userId })
+                    });
+                }
+            }
+        }
+
         // Toggle search input expansion
         const searchContainer = document.getElementById('search-container');
         const searchButton = document.getElementById('search-button');
@@ -947,6 +1097,15 @@
         }
 
         document.addEventListener("DOMContentLoaded", loadProfilePictures);
+        document.addEventListener("DOMContentLoaded", () => {
+            const user = getLoggedInUser();
+            if (user) {
+                loadNotifications(user.user.userId);
+            } else {
+                console.warn("Không tìm thấy người dùng đăng nhập.");
+            }
+        });
+
     </script>
 </body>
 </html>
