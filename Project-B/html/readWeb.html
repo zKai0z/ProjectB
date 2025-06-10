@@ -868,6 +868,50 @@
             $("html, body").animate({scrollTop: 0}, 700);
         }
 
+        // update history
+        async function updateLatestChapter(storyId, chapterNumber) {
+            try {
+                const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
+                if (!storedData?.user?.userId) return;
+
+                const userId = storedData.user.userId;
+                const userResponse = await fetch(`/api/user?id=${userId}`);
+                if (!userResponse.ok) throw new Error("Không thể lấy thông tin người dùng");
+
+                const user = await userResponse.json();
+                let history = user.history || [];
+
+                const now = new Date().toISOString();
+
+                // Tìm entry tương ứng
+                const existingEntry = history.find(entry => entry.storyId === storyId);
+
+                if (existingEntry) {
+                    existingEntry.latestChapter = chapterNumber;
+                } else {
+                    history.unshift({
+                        storyId,
+                        latestChapter: chapterNumber, 
+                        timestamp: now
+                    });
+                }
+
+                if (history.length > 10) history = history.slice(0, 10);
+
+                const updateResponse = await fetch(`/api/user/${userId}/history`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ history })
+                });
+
+                if (!updateResponse.ok) throw new Error("Không thể cập nhật chương đọc gần nhất");
+
+                console.log("✅ Đã cập nhật chương gần nhất đọc:", chapterNumber);
+            } catch (error) {
+                console.error("❌ Lỗi khi cập nhật chương gần nhất:", error);
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             const chapterControl = document.querySelector(".chapter-control");
             let lastScrollY = window.scrollY;
@@ -989,6 +1033,8 @@
                 
                 // ✅ Load Comments
                 loadComments(storyId, `chapter ${chapterNumber}`);
+                // ✅ Update history
+                await updateLatestChapter(storyId, `chapter ${chapterNumber}`);
 
             } catch (error) {
                 Swal.fire({ icon: "error", title: "Lỗi khi tải truyện", text: error.message, confirmButtonText: "OK" });

@@ -736,6 +736,28 @@ const server = http.createServer(async (req, res) => {
         req.on("end", async () => {
             try {
                 const { history } = JSON.parse(body);
+                if (!Array.isArray(history) || !history.every(item =>
+                    typeof item === "object" && typeof item.storyId === "string")) {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify({ message: "Invalid history format" }));
+                }
+    
+                // Thêm timestamp nếu thiếu, và giới hạn 50 phần tử
+                const cleanHistory = history.map(entry => ({
+                    storyId: entry.storyId,
+                    latestChapter: entry.latestChapter || null,
+                    timestamp: entry.timestamp ? new Date(entry.timestamp) : new Date()
+                }));
+    
+                const limitedHistory = cleanHistory
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) // Mới nhất lên đầu
+                    .slice(0, 50); // ⚠️ giới hạn 50 truyện
+
+                if (!Array.isArray(history) || !history.every(item =>
+                    typeof item === "object" && typeof item.storyId === "string")) {
+                    res.writeHead(400, { "Content-Type": "application/json" });
+                    return res.end(JSON.stringify({ message: "Invalid history format" }));
+                }
 
                 const result = await dbUser.collection("users").updateOne(
                     { _id: new ObjectId(userId) },

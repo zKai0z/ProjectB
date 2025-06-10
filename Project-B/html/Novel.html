@@ -821,11 +821,9 @@
 
         async function updateHistory(storyId) {
             console.log("📌 updateHistory() called with:", storyId);
-
             try {
-                // Fetch the currently logged-in user
                 const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
-                if (!storedData || !storedData.user || !storedData.user.userId) {
+                if (!storedData?.user?.userId) {
                     Swal.fire({ icon: "error", text: "User chưa đăng nhập", confirmButtonText: "OK" });
                     return;
                 }
@@ -835,24 +833,22 @@
                 if (!userResponse.ok) throw new Error("Không thể lấy thông tin người dùng");
 
                 const user = await userResponse.json();
-                console.log("User ID being sent:", userId);
-
-                // Get user's existing history (assuming it's stored in user.history)
                 let history = user.history || [];
 
-                // Remove duplicate entries
-                history = history.filter(id => id !== storyId);
+                const now = new Date().toISOString();
 
-                // Add new story ID to the front
-                history.unshift(storyId);
+                // Kiểm tra nếu đã có rồi thì cập nhật; nếu chưa thì thêm mới
+                history = history.filter(entry => entry.storyId !== storyId);
 
-                // Limit history to 10 items
-                if (history.length > 10) {
-                    history = history.slice(0, 10);
-                }
+                history.unshift({
+                    storyId,
+                    latestChapter: null,  // hoặc null nếu chưa đọc
+                    timestamp: now
+                });
 
-                // Update the history in the database
-                const updateResponse = await fetch(`/api/user/${userId}/history`, { 
+                if (history.length > 10) history = history.slice(0, 10);
+
+                const updateResponse = await fetch(`/api/user/${userId}/history`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ history })

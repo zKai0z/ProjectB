@@ -1073,7 +1073,6 @@
             historylist.innerHTML = "";
 
             try {
-                // Fetch the currently logged-in user
                 const storedData = JSON.parse(sessionStorage.getItem("loggedInUser"));
                 if (!storedData || !storedData.user || !storedData.user.userId) {
                     Swal.fire({ icon: "error", text: "User chưa đăng nhập", confirmButtonText: "OK" });
@@ -1085,23 +1084,30 @@
                 if (!userResponse.ok) throw new Error("Không thể lấy thông tin người dùng");
 
                 const user = await userResponse.json();
-                const history = user.history || []; // Array of story IDs
+
+                let history = (user.history || [])
+                    .filter(entry => entry && entry.storyId)
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Mới nhất lên đầu
 
                 if (history.length === 0) {
                     historylist.innerHTML = "<p>Không có lịch sử đọc.</p>";
                     return;
                 }
 
-                // Fetch story details based on each story ID
                 let stories = [];
-                const storyDetailsPromises = history.map(async (storyId) => {
+                const storyDetailsPromises = history.map(async (entry) => {
                     try {
-                        const response = await fetch(`/api/stories?id=${storyId}`);
-                        if (!response.ok) throw new Error(`Không thể lấy thông tin truyện với ID ${storyId}`);
-                        
+                        const response = await fetch(`/api/stories?id=${entry.storyId}`);
+                        if (!response.ok) throw new Error(`Không thể lấy thông tin truyện với ID ${entry.storyId}`);
+
                         const data = await response.json();
-                        
-                        stories.push(...data); 
+                        if (data && data[0]) {
+                            data[0]._history = {
+                                latestChapter: entry.latestChapter,
+                                timestamp: entry.timestamp
+                            };
+                            stories.push(data[0]);
+                        }
                     } catch (error) {
                         console.error(error);
                     }
@@ -1109,15 +1115,7 @@
 
                 await Promise.all(storyDetailsPromises);
 
-                console.log(stories); 
-
-
-                await Promise.all(storyDetailsPromises);
-
-                console.log(stories); 
-
-
-                // Render the stories
+                // Render stories
                 stories.forEach(story => {
                     const storyCard = document.createElement("div");
                     storyCard.classList.add("story-card");
@@ -1125,7 +1123,7 @@
                     storyCard.dataset.theloai = JSON.stringify(story.genre);
                     storyCard.dataset.status = story.status;
                     storyCard.dataset.views = story.views;
-                    storyCard.dataset.chapters = Object.keys(story.chapters).length;
+                    storyCard.dataset.chapters = Object.keys(story.chapters || {}).length;
 
                     storyCard.innerHTML = `
                         <a href="#" onclick='redirectToStoryPage(${JSON.stringify(story)})'>
@@ -1133,9 +1131,9 @@
                         </a>
                         <div class="story-info">    
                             <h3><a href="#" onclick='redirectToStoryPage(${JSON.stringify(story)})'>${story.title}</a></h3>
-                            <p><strong>Chapters:</strong> ${Object.keys(story.chapters).length}</p>
-                            <p><strong>Lượt Xem:</strong> ${story.views}</p>
-                            <p><strong>Theo Dõi:</strong> ${story.followers}</p>
+                            <p><strong>Chapters:</strong> ${Object.keys(story.chapters || {}).length}</p>
+                            <p><strong>Chương bạn đọc:</strong> ${story._history?.latestChapter ?? "Chưa rõ"}</p>
+                            <p><strong>Gần nhất:</strong> ${new Date(story._history?.timestamp).toLocaleString("vi-VN")}</p>
                         </div>
                     `;
 
