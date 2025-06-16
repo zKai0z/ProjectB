@@ -706,6 +706,12 @@
                 const user = await userResponse.json();
                 console.log("📌 Thông tin người dùng:", user);
 
+                const historyEntry = user.history?.find(h => h.storyId === currentStory._id);
+                const continueChapter = historyEntry?.latestChapter;
+                const continueButtonHTML = continueChapter
+                    ? `<button id="continue-reading">Continue</button>`
+                    : "";
+
                 // Kiểm tra xem truyện đã được theo dõi chưa
                 const isFollowed = user.followedStories.includes(currentStory._id);
 
@@ -735,6 +741,7 @@
                         <button id="newest-chapter">Newest Chapter</button>
                     </div>
                 `;
+                document.querySelector(".info-detail .buttons").innerHTML += continueButtonHTML;
 
                 // Hiển thị danh sách chương
                 const chapterList = Object.keys(currentStory.chapters).sort((a, b) => a - b); // Ensure chapters are sorted
@@ -756,6 +763,11 @@
                     });
                 }
 
+                if (continueChapter) {
+                    document.getElementById("continue-reading").addEventListener("click", () => {
+                        window.location.href = `readWeb.html?story=${encodeURIComponent(currentStory._id)}&chapter=${encodeURIComponent(continueChapter)}`;
+                    });
+                }
             } catch (error) {
                 console.error("Lỗi:", error);
                 Swal.fire({ icon: "error", text: error.message, confirmButtonText: "OK" });
@@ -836,13 +848,16 @@
                 let history = user.history || [];
 
                 const now = new Date().toISOString();
+                const oldEntry = history.find(entry => entry.storyId === storyId);
 
-                // Kiểm tra nếu đã có rồi thì cập nhật; nếu chưa thì thêm mới
+                // Giữ lại latestChapter nếu đã có
+                const latestChapter = oldEntry?.latestChapter ?? null;
+
+                // Lọc bỏ bản cũ và thêm bản mới lên đầu
                 history = history.filter(entry => entry.storyId !== storyId);
-
                 history.unshift({
                     storyId,
-                    latestChapter: null,  // hoặc null nếu chưa đọc
+                    latestChapter,
                     timestamp: now
                 });
 

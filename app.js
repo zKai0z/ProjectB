@@ -340,16 +340,24 @@ const server = http.createServer(async (req, res) => {
 
     // API Lấy danh sách truyện
     if (pathname === "/api/stories" && req.method === "GET") {
+        const urlObj = new URL(req.url, `http://${req.headers.host}`);
+        const storyId = urlObj.searchParams.get("id");
+    
         try {
-            const stories = await getStories(); // Lấy trực tiếp từ MongoDB
-            res.writeHead(200, { "Content-Type": "application/json" });
-            res.end(JSON.stringify(stories));
+            if (storyId) {
+                const story = await dbStory.collection("story").find({ _id: storyId }).toArray();
+                res.writeHead(200, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify(story));
+            } else {
+                const stories = await getStories(); // 🏠 Lấy toàn bộ truyện
+                res.writeHead(200, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify(stories));
+            }
         } catch (error) {
             res.writeHead(500, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ error: "Không thể lấy danh sách truyện" }));
+            return res.end(JSON.stringify({ error: "Không thể lấy danh sách truyện" }));
         }
-        return;
-    }
+    }    
 
     // API cập nhật thông tin truyện
     if (pathname === "/api/story/update" && req.method === "PUT") {
@@ -721,16 +729,16 @@ const server = http.createServer(async (req, res) => {
         return;
     }    
     
-    // update history
+    // API cập nhật lịch sử của user
     if (req.method === "PUT" && pathname.startsWith("/api/user/") && pathname.endsWith("/history")) {
         const parts = pathname.split("/");
         const userId = parts[3]; 
-
+    
         if (!ObjectId.isValid(userId)) {
             res.writeHead(400, { "Content-Type": "application/json" });
             return res.end(JSON.stringify({ message: "Invalid user ID" }));
         }
-
+    
         let body = "";
         req.on("data", chunk => body += chunk);
         req.on("end", async () => {
@@ -742,28 +750,22 @@ const server = http.createServer(async (req, res) => {
                     return res.end(JSON.stringify({ message: "Invalid history format" }));
                 }
     
-                // Thêm timestamp nếu thiếu, và giới hạn 50 phần tử
+                // Làm sạch và giới hạn
                 const cleanHistory = history.map(entry => ({
-                    storyId: entry.storyId,
+                    storyId: (entry.storyId?._id || entry.storyId).toString(),
                     latestChapter: entry.latestChapter || null,
                     timestamp: entry.timestamp ? new Date(entry.timestamp) : new Date()
                 }));
     
                 const limitedHistory = cleanHistory
-                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) // Mới nhất lên đầu
-                    .slice(0, 50); // ⚠️ giới hạn 50 truyện
-
-                if (!Array.isArray(history) || !history.every(item =>
-                    typeof item === "object" && typeof item.storyId === "string")) {
-                    res.writeHead(400, { "Content-Type": "application/json" });
-                    return res.end(JSON.stringify({ message: "Invalid history format" }));
-                }
-
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .slice(0, 50);
+    
                 const result = await dbUser.collection("users").updateOne(
                     { _id: new ObjectId(userId) },
-                    { $set: { history } }
+                    { $set: { history: limitedHistory } }
                 );
-
+    
                 if (result.modifiedCount === 1) {
                     res.writeHead(200, { "Content-Type": "application/json" });
                     return res.end(JSON.stringify({ message: "Updated history" }));
@@ -772,12 +774,13 @@ const server = http.createServer(async (req, res) => {
                     return res.end(JSON.stringify({ message: "No changes made" }));
                 }
             } catch (error) {
+                console.error("🔥 Error updating history:", error);
                 res.writeHead(500, { "Content-Type": "application/json" });
                 return res.end(JSON.stringify({ message: "Internal server error", error: error.message }));
             }
         });
         return;
-    }
+    }    
     
     // Phục vụ file tĩnh
     let requestedFile = pathname === "/" ? "/home.html" : pathname;

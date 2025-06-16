@@ -882,16 +882,27 @@
                 let history = user.history || [];
 
                 const now = new Date().toISOString();
+                const storyIdStr = typeof storyId === "string"
+                    ? storyId
+                    : storyId?._id?.toString() || storyId.toString();
+                let updated = false;
 
-                // Tìm entry tương ứng
-                const existingEntry = history.find(entry => entry.storyId === storyId);
+                history = history.map(entry => {
+                    if (entry.storyId === storyIdStr) {
+                        updated = true;
+                        return {
+                            ...entry,
+                            latestChapter: chapterNumber,
+                            timestamp: now
+                        };
+                    }
+                    return entry;
+                });
 
-                if (existingEntry) {
-                    existingEntry.latestChapter = chapterNumber;
-                } else {
+                if (!updated) {
                     history.unshift({
-                        storyId,
-                        latestChapter: chapterNumber, 
+                        storyId: storyIdStr,
+                        latestChapter: chapterNumber,
                         timestamp: now
                     });
                 }
